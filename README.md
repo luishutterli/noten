@@ -1,3 +1,6 @@
+# TODO
+- Change and delete Firebase API-Key [Manage Keys](https://console.cloud.google.com/apis/credentials?project=noten-29b59)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
