@@ -1,11 +1,11 @@
-import firebase from 'firebase/app';
-import 'firebase/firestore';
-import 'firebase/auth';
-import 'firebase/analytics';
 
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+import { getAnalytics } from 'firebase/analytics';
 
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { useCollectionData } from 'react-firebase-hooks/firestore';
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
 const firebaseConfig = {
     apiKey: "AIzaSyCQ_il9Q3JfrFa2OY6HLkvcmwRz320HjFE", // TODO: Delete and Change key
@@ -17,8 +17,11 @@ const firebaseConfig = {
     measurementId: "G-C9JRSGW5YB"
 };
 
-export const app = firebase.initializeApp(firebaseConfig);
 
-export const auth = firebase.auth();
-export const firestore = firebase.firestore();
-export const analytics = firebase.analytics();
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+const firestore = getFirestore(app);
+const analytics = getAnalytics(app);
+
+export { app, auth, firestore, analytics };
