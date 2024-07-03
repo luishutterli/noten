@@ -14,6 +14,10 @@ const FirebaseAuth = () => {
       ],
       signInSuccessUrl: "/",
       callbacks: {
+        signInFailure: (error) => {
+          console.log("Sign in error:", error);
+          return false;
+        },
         signInSuccessWithAuthResult: (authResult, redirectUrl) => {
           console.log("User signed in:", authResult);
           return false;
