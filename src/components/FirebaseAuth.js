@@ -16,7 +16,7 @@ const FirebaseAuth = () => {
       callbacks: {
         signInSuccessWithAuthResult: (authResult, redirectUrl) => {
           console.log("User signed in:", authResult);
-          return true;
+          return false;
         },
       },
     });
