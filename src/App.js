@@ -1,7 +1,8 @@
 import './App.css';
-import FirebaseAuth from './components/FirebaseAuth';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from './firebase';
+import { Navigate } from 'react-router-dom';
+import Header from './components/Header';
 
 function App() {
 
@@ -9,10 +10,9 @@ function App() {
 
   return (
     <div className="App">
-      <header>
-      </header>
+      <Header />
       <section>
-        {user ? <div>HALLLLOOO</div> : <FirebaseAuth />}
+        {!user && <Navigate to="/auth" />}
       </section>
     </div>
   );
