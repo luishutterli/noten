@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../firebase';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUserCircle, faCog, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import React, { useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../firebase";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserCircle, faCog, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 
 const Header = () => {
     const [user] = useAuthState(auth);
@@ -21,7 +21,7 @@ const Header = () => {
 
     return (
         <header className="flex justify-between items-center p-4 bg-gray-800 text-white" onMouseLeave={() => setDropdownOpen(false)}>
-            <div className="logo">My Site</div>
+            <div className="logo">Noten Rechner</div>
             <div className="user-section relative">
                 {user?.photoURL ? (
                     <img
