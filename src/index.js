@@ -5,6 +5,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AuthForms from "./components/AuthForm";
+import SubjectAdminDashboard from "./components/SubjectAdminDashboard";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -13,6 +14,7 @@ root.render(
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/auth" element={<AuthForms />} />
+        <Route path="/sAdmin" element={<SubjectAdminDashboard />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

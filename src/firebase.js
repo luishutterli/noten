@@ -1,7 +1,7 @@
 
 import { initializeApp } from "firebase/app";
 import { getAuth, connectAuthEmulator } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -23,6 +23,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 connectAuthEmulator(auth, "http://127.0.0.1:9099");
 const firestore = getFirestore(app);
+connectFirestoreEmulator(firestore, "127.0.0.1", 8080);
 const analytics = getAnalytics(app);
 
 export { app, auth, firestore, analytics };
