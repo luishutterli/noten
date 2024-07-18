@@ -3,12 +3,10 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../firebase";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle, faCog, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
 
 const Header = () => {
     const [user] = useAuthState(auth);
     const [dropdownOpen, setDropdownOpen] = useState(false);
-    const navigate = useNavigate();
 
 
     const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
@@ -26,33 +24,33 @@ const Header = () => {
         <header className="flex justify-between items-center p-4 bg-gray-800 text-white" onMouseLeave={() => setDropdownOpen(false)}>
             <div className="logo">Noten Rechner</div>
             <div className="user-section relative">
-                {user?.photoURL ? (
-                    <img
-                        src={user.photoURL}
-                        alt="User"
-                        className="w-10 h-10 rounded-full cursor-pointer"
-                        onClick={toggleDropdown}
-                    />
-                ) : (
-                    <FontAwesomeIcon
-                        icon={faUserCircle}
-                        className="w-10 h-10 text-white cursor-pointer"
-                        onClick={toggleDropdown}
-                    />
-                )}
+                <button
+                    className="flex items-center"
+                    onClick={toggleDropdown}
+                    tabIndex={0}
+                >
+                    <span className="mr-2">{user?.displayName}</span>
+                    {user?.photoURL ? (
+                        <img
+                            src={user.photoURL}
+                            alt="User"
+                            className="w-10 h-10 rounded-full cursor-pointer"
+                        />
+                    ) : (
+                        <FontAwesomeIcon
+                            icon={faUserCircle}
+                            className="w-10 h-10 text-white cursor-pointer"
+                        />
+                    )}
+                </button>
                 {dropdownOpen && (
                     <div className="absolute right-0 mt-2 py-2 w-48 bg-white rounded-md shadow-xl z-20">
                         <button type="button" className="w-full block px-4 py-2 text-sm text-start text-blue-500 hover:bg-gray-200">
-                            <FontAwesomeIcon icon={faCog} className="mr-2" /> Settings
+                            <FontAwesomeIcon icon={faCog} className="mr-2" /> Einstellungen
                         </button>
                         <button type="button" className="w-full block px-4 py-2 text-sm text-start text-red-500 hover:bg-gray-200" onClick={handleLogout}>
-                            <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" /> Logout
+                            <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" /> Ausloggen
                         </button>
-                        {user?.role === "admin" && (
-                            <button type="button" className="w-full block px-4 py-2 text-sm text-start text-blue-500 hover:bg-gray-200" onClick={() => navigate("/sAdmin")}>
-                                <FontAwesomeIcon icon={faCog} className="mr-2" /> Admin
-                            </button>
-                        )}
                     </div>
                 )}
             </div>

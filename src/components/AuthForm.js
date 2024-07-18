@@ -85,15 +85,15 @@ const AuthForms = () => {
       <div className="w-full max-w-xs">
         {needsEmailVerification ? (
           <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 text-center">
-            <p>Please check your email to verify your account.</p>
+            <p>Bitte überprüfen Sie ihr Postfach um Ihr Konto zu verifizieren.</p>
             <button onClick={resendVerificationEmail} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-              Resend Verification Email
+              Verifizierungs-E-Mail erneut senden
             </button>
           </div>
         ) : (
           <>
             <button onClick={handleGoogleLogin} className="w-full mb-4 py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded">
-              Login with Google
+              Mit Google anmelden
             </button>
             {isLogin ? (
               <form onSubmit={handleLogin} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
@@ -101,14 +101,14 @@ const AuthForms = () => {
                   <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
                 </div>
                 <div className="mb-6">
-                  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" />
+                  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Passwort" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" />
                 </div>
                 <div className="flex items-center justify-between">
                   <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                    Login
+                    Einloggen
                   </button>
                   <button type="button" onClick={() => setIsLogin(false)} className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 focus:outline-none">
-                    Switch to Sign Up
+                    Zur Registrierung
                   </button>
                 </div>
                 {errorMessage && <p className="mb-4 text-red-500">{errorMessage}</p>}
@@ -119,14 +119,14 @@ const AuthForms = () => {
                   <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
                 </div>
                 <div className="mb-6">
-                  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" />
+                  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Passwort" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" />
                 </div>
                 <div className="flex items-center justify-between">
                   <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                    Sign Up
+                    Registrieren
                   </button>
                   <button type="button" onClick={() => setIsLogin(true)} className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 focus:outline-none">
-                    Switch to Login
+                    Zur Anmeldung
                   </button>
                 </div>
                 {errorMessage && <p className="mb-4 text-red-500">{errorMessage}</p>}
