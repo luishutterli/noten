@@ -3,6 +3,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../firebase";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle, faCog, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
+import { IconButton, Avatar } from "@mui/material";
 
 const Header = () => {
     const [user] = useAuthState(auth);
@@ -24,25 +25,16 @@ const Header = () => {
         <header className="flex justify-between items-center p-4 bg-gray-800 text-white" onMouseLeave={() => setDropdownOpen(false)}>
             <div className="logo">Noten Rechner</div>
             <div className="user-section relative">
-                <button
-                    className="flex items-center"
-                    onClick={toggleDropdown}
-                    tabIndex={0}
-                >
-                    <span className="mr-2">{user?.displayName}</span>
+                <IconButton onClick={toggleDropdown} tabIndex={0}>
+                    <span className="mr-2 text-white">{user?.displayName}</span>
                     {user?.photoURL ? (
-                        <img
-                            src={user.photoURL}
-                            alt="User"
-                            className="w-10 h-10 rounded-full cursor-pointer"
-                        />
+                        <Avatar src={user.photoURL} alt="User" />
                     ) : (
-                        <FontAwesomeIcon
-                            icon={faUserCircle}
-                            className="w-10 h-10 text-white cursor-pointer"
-                        />
+                        <Avatar>
+                            <FontAwesomeIcon icon={faUserCircle} />
+                        </Avatar>
                     )}
-                </button>
+                </IconButton>
                 {dropdownOpen && (
                     <div className="absolute right-0 mt-2 py-2 w-48 bg-white rounded-md shadow-xl z-20">
                         <button type="button" className="w-full block px-4 py-2 text-sm text-start text-blue-500 hover:bg-gray-200">

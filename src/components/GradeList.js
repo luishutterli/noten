@@ -1,12 +1,7 @@
 import React from "react";
+import PropTypes from "prop-types";
 
-const exams = [
-  { Fach: "Mathematik", Datum: "2023-04-01", Name: "Algebra Test", Note: "5.5", Gewicht: "2" },
-  { Fach: "Informatik", Datum: "2023-04-05", Name: "Datenstrukturen", Note: "6.0", Gewicht: "2" },
-  { Fach: "Englisch", Datum: "2023-04-10", Name: "Vokabeltest", Note: "5.0", Gewicht: "1" },
-];
-
-const GradeList = () => {
+const GradeList = ({ onExamClick, exams }) => {
   return (
     <table className="w-full table-auto border-collapse shadow-lg bg-white">
       <thead className="bg-gray-200">
@@ -20,17 +15,22 @@ const GradeList = () => {
       </thead>
       <tbody>
         {exams.map((exam, index) => (
-          <tr key={index} className="even:bg-gray-100">
-            <td className="border p-2">{exam.Fach}</td>
-            <td className="border p-2">{exam.Datum}</td>
-            <td className="border p-2">{exam.Name}</td>
-            <td className="text-end border p-2">{exam.Note}</td>
-            <td className="text-end border p-2">{exam.Gewicht}</td>
+          <tr key={exam.uid} className="even:bg-gray-100 cursor-pointer hover:bg-slate-300" onClick={() => onExamClick(exam)}>
+            <td className="border p-2">{exam.subject}</td>
+            <td className="border p-2">{exam.date}</td>
+            <td className="border p-2">{exam.name}</td>
+            <td className="text-end border p-2">{exam.grade}</td>
+            <td className="text-end border p-2">{exam.weight}</td>
           </tr>
         ))}
       </tbody>
     </table>
   );
+};
+
+GradeList.propTypes = {
+  onExamClick: PropTypes.func.isRequired,
+  exams: PropTypes.array.isRequired,
 };
 
 export default GradeList;
