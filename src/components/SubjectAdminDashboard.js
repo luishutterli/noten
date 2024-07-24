@@ -26,7 +26,7 @@ function SubjectAdminDashboard() {
         ...doc.data()
       }));
       let subjects = subjectsData.filter(subject => subject.type === "subject");
-      let groups = subjectsData.filter(subject => subject.type === "group");
+      let groups = subjectsData.filter(subject => subject.type === "group" || subject.type === "halfterm");
 
       groups = groups.map(group => ({
         ...group,
@@ -123,9 +123,11 @@ function SubjectAdminDashboard() {
               </MenuItem>
             ))}
             {existingGroups.map(group => (
-              <MenuItem key={group.id} value={group.id}>
-                {group.name}, G
-              </MenuItem>
+              group.type !== "halfterm" && (
+                <MenuItem key={group.id} value={group.id}>
+                  {group.name}, G
+                </MenuItem>
+              )
             ))}
           </TextField>
         )}

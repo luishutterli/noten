@@ -30,7 +30,7 @@ const appCheck = initializeAppCheck(app, {
 const auth = getAuth(app);
 /* connectAuthEmulator(auth, "http://127.0.0.1:9099"); */
 const firestore = getFirestore(app);
-connectFirestoreEmulator(firestore, "127.0.0.1", 8080);
+// connectFirestoreEmulator(firestore, "127.0.0.1", 8080);
 /* const analytics = getAnalytics(app); */
 
 export { app, appCheck, auth, firestore, /* analytics */ };

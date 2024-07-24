@@ -6,7 +6,16 @@ import dayjs from "dayjs";
 const ExamCard = ({ exam, onSave, onCancel, onDelete, subjects }) => {
     const today = new Date().toISOString().split("T")[0];
 
-    const [subject, setSubject] = useState(exam ? exam.subject : "");
+    const findSubjectIdByDName = (name) => {
+        let subj = subjects.find(subj => (subj.name + (subj.teacher && ` (${subj.teacher})`)) === name);
+        return subj?.id || "";
+    };
+    const findSubjectDNameById = (id) => {
+        let subj = subjects.find(subj => subj.id === id);
+        return (subj.name + (subj.teacher && ` (${subj.teacher})`)) || ""
+    };
+
+    const [subject, setSubject] = useState(exam ? findSubjectDNameById(exam.subject) : "");
     const [date, setDate] = useState(exam ? exam.date : today);
     const [name, setName] = useState(exam ? exam.name : "");
     const [grade, setGrade] = useState(exam ? exam.grade : "");
@@ -43,7 +52,7 @@ const ExamCard = ({ exam, onSave, onCancel, onDelete, subjects }) => {
     };
 
     const handleSave = () => {
-        const newExam = { subject: subject, date: date, name: name, grade: grade, weight: weight };
+        const newExam = { subject: findSubjectIdByDName(subject), date: date, name: name, grade: grade, weight: weight };
         onSave(newExam);
     };
 
@@ -64,7 +73,7 @@ const ExamCard = ({ exam, onSave, onCancel, onDelete, subjects }) => {
                     margin="normal"
                 >
                     {subjects.map((subj) => (
-                        <MenuItem key={subj} value={subj}>
+                        <MenuItem key={subj.id} value={subj.name}>
                             {subj.name} {subj.teacher && `(${subj.teacher})`}
                         </MenuItem>
                     ))}
