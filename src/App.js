@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, firestore } from "./firebase";
 import { Navigate } from "react-router-dom";
@@ -7,26 +7,7 @@ import Header from "./components/Header";
 import GradeList from "./components/GradeList";
 import { Button } from "@mui/material";
 import ExamCard from "./components/ExamCard";
-import { collection, getDocs, query, addDoc, updateDoc, serverTimestamp, where } from "firebase/firestore";
-
-
-// const exams = [
-//   { uid: "1", subject: "Mathematik", date: "2023-04-01", name: "Algebra Test", grade: "5.5", weight: "2" },
-//   { uid: "2", subject: "Informatik", date: "2023-04-05", name: "Datenstrukturen", grade: "6.0", weight: "2" },
-//   { uid: "3", subject: "Englisch", date: "2023-04-10", name: "Vokabeltest", grade: "5.0", weight: "1" },
-//   { uid: "4", subject: "Chemie", date: "2023-04-15", name: "Periodensystem", grade: "4.5", weight: "1" },
-//   { uid: "5", subject: "Geschichte", date: "2023-04-20", name: "Erster Weltkrieg", grade: "5.8", weight: "2" },
-//   { uid: "6", subject: "Biologie", date: "2023-04-25", name: "Pflanzenwachstum", grade: "6.5", weight: "1" }
-// ];
-
-// const subjects = [
-//   { uid: "1", name: "Mathematik", teacher: "LÄU" },
-//   { uid: "2", name: "Informatik", teacher: "" },
-//   { uid: "3", name: "Englisch", teacher: "LAJ" },
-//   { uid: "4", name: "Chemie", teacher: "" },
-//   { uid: "5", name: "Geschichte", teacher: "SWA" },
-//   { uid: "6", name: "Biologie", teacher: "" }
-// ];
+import { collection, query, addDoc, updateDoc, serverTimestamp, where, onSnapshot, doc, deleteDoc } from "firebase/firestore";
 
 function App() {
   const [user] = useAuthState(auth);
@@ -37,40 +18,51 @@ function App() {
   const [subjects, setSubjects] = useState([]);
   const [exams, setExams] = useState([]);
 
-  const fetchSubjects = async () => {
+  const fetchSubjects = useCallback(() => {
     try {
       const q = query(collection(firestore, "subjects"));
-      const querySnapshot = await getDocs(q);
-      const subjectsData = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setSubjects(subjectsData.filter(subject => subject.type === "subject"));
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        console.log("fetching subjects source:", querySnapshot.metadata.fromCache ? "cache" : "server");
+        const subjectsData = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setSubjects(subjectsData.filter(subject => subject.type === "subject"));
+      });
+      return unsubscribe;
     } catch (error) {
       console.error("Error fetching subjects: ", error);
     }
-  };
+  },[]);
 
-  const fetchExams = async () => {
+  const fetchExams = useCallback(() => {
+    if (!user) return;
     try {
       const q = query(collection(firestore, "grades"), where("uid", "==", user.uid));
-      const querySnapshot = await getDocs(q);
-      const examsData = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setExams(examsData);
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        console.log("fetching exams source:", querySnapshot.metadata.fromCache ? "cache" : "server");
+        const examsData = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setExams(examsData);
+      });
+      return unsubscribe;
     } catch (error) {
       console.error("Error fetching exams: ", error);
     }
-  };
+  }, [user]);
 
   // Fetch data
   useEffect(() => {
-    if(!user) return;
-    fetchSubjects();
-    fetchExams();
-  }, []);
+    if (!user) return;
+    const unsubscribeSubjects = fetchSubjects();
+    const unsubscribeExams = fetchExams();
+    return () => {
+      unsubscribeSubjects();
+      unsubscribeExams();
+    };
+  }, [user, fetchSubjects, fetchExams]);
 
   const handleNewExam = () => {
     setCurrentExam(null);
@@ -79,9 +71,9 @@ function App() {
 
   const handleSaveExam = async (exam) => {
     setShowExamCard(false);
-    console.log("Save exam", exam);
     if (exam.id) {
-      await updateDoc(collection(firestore, "grades", exam.id), {
+      console.log("Update exam");
+      await updateDoc(doc(firestore, "grades", exam.id), {
         subject: exam.subject,
         date: exam.date,
         name: exam.name,
@@ -90,7 +82,9 @@ function App() {
         updatedAt: serverTimestamp()
       });
     } else {
+      console.log("Save exam");
       await addDoc(collection(firestore, "grades"), {
+        uid: user.uid,
         subject: exam.subject,
         date: exam.date,
         name: exam.name,
@@ -102,6 +96,12 @@ function App() {
     }
   };
 
+  const handelExamDelete = async (exam) => {
+    setShowExamCard(false);
+    console.log("Delete exam");
+    await deleteDoc(doc(firestore, "grades", exam.id));
+  };
+
   const handleCancel = () => {
     setShowExamCard(false);
   };
@@ -109,11 +109,6 @@ function App() {
   const handleExamClick = (exam) => {
     setCurrentExam(exam);
     setShowExamCard(true);
-  };
-
-  const handelExamDelete = (exam) => {
-    console.log("Delete exam", exam);
-    setShowExamCard(false);
   };
 
   return (

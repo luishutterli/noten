@@ -15,6 +15,7 @@ function SubjectAdminDashboard() {
 
   useEffect(() => {
     fetchSubjects();
+    console.log("fetching subjects");
   }, []);
 
   const fetchSubjects = async () => {

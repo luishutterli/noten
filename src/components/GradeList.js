@@ -2,6 +2,17 @@ import React from "react";
 import PropTypes from "prop-types";
 
 const GradeList = ({ onExamClick, exams, subjects }) => {
+
+  const formatDate = (date) => {
+    const [year, month, day] = date.split("-");
+    return `${day}.${month}.${year}`;
+  };
+
+  const round = (value, decimals) => {
+    const roundedValue = Math.round(value * Math.pow(10, decimals)) / Math.pow(10, decimals);
+    return roundedValue.toFixed(decimals);
+  };
+
   return (
     <table className="w-full table-auto border-collapse shadow-lg bg-white">
       <thead className="bg-gray-200">
@@ -18,12 +29,12 @@ const GradeList = ({ onExamClick, exams, subjects }) => {
           const subject = subjects.find((subject) => subject.id === exam.subject);
           const subjectName = subject ? subject.name : "";
           return (
-            <tr key={exam.uid} className="even:bg-gray-100 cursor-pointer hover:bg-slate-300" onClick={() => onExamClick(exam)}>
+            <tr key={exam.id} className="even:bg-gray-100 cursor-pointer hover:bg-slate-300" onClick={() => onExamClick(exam)}>
               <td className="border p-2">{subjectName}</td>
-              <td className="border p-2">{exam.date}</td>
+              <td className="border p-2">{formatDate(exam.date)}</td>
               <td className="border p-2">{exam.name}</td>
-              <td className="text-end border p-2">{exam.grade}</td>
-              <td className="text-end border p-2">{exam.weight}</td>
+              <td className="text-end border p-2">{round(exam.grade, 1)}</td>
+              <td className="text-end border p-2">{round(exam.weight, 1)}</td>
             </tr>
           );
         })}

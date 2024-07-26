@@ -52,7 +52,11 @@ const ExamCard = ({ exam, onSave, onCancel, onDelete, subjects }) => {
     };
 
     const handleSave = () => {
-        const newExam = { subject: findSubjectIdByDName(subject), date: date, name: name, grade: grade, weight: weight };
+        let newExam = {};
+        if(exam.id)
+            newExam = { id: exam.id, subject: findSubjectIdByDName(subject), date: date, name: name, grade: grade, weight: weight };
+        else
+            newExam = { subject: findSubjectIdByDName(subject), date: date, name: name, grade: grade, weight: weight };
         onSave(newExam);
     };
 
