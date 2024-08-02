@@ -33,4 +33,9 @@ const firestore = getFirestore(app);
 // connectFirestoreEmulator(firestore, "127.0.0.1", 8080);
 /* const analytics = getAnalytics(app); */
 
-export { app, appCheck, auth, firestore, /* analytics */ };
+const getUserClaims = async () => {
+    const token = await auth.currentUser.getIdTokenResult(true);
+    return token.claims;
+};
+
+export { app, appCheck, auth, firestore, getUserClaims/* analytics */ };

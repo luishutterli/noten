@@ -16,5 +16,40 @@ service cloud.firestore {
       allow update: if request.auth.uid == resource.data.uid && request.auth.uid == request.resource.data.uid;
     }
 
+    // Functions for subscription
+    function hasStandardPlan() {
+      return request.auth.token.stripeRole == 'standard';
+    }
+
+    function hasSubscription() {
+      return hasStandardPlan();
+    }
+    
+    // Rules for stripe
+    match /customers/{uid} {
+      allow read: if request.auth.uid == uid;
+
+      match /checkout_sessions/{id} {
+        allow read, write: if request.auth.uid == uid;
+      }
+      match /subscriptions/{id} {
+        allow read: if request.auth.uid == uid;
+      }
+      match /payments/{id} {
+        allow read: if request.auth.uid == uid;
+      }
+    }
+
+    match /products/{id} {
+      allow read: if true;
+
+      match /prices/{id} {
+        allow read: if true;
+      }
+
+      match /tax_rates/{id} {
+        allow read: if true;
+      }
+    }
   }
 }

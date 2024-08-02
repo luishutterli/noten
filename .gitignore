@@ -25,3 +25,4 @@ firestore-debug.log
 ui-debug.log
 firebase-debug.log
 firebase-adminsdk.json
+.firebase/
