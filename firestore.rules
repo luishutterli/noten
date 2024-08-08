@@ -18,11 +18,15 @@ service cloud.firestore {
 
     // Functions for subscription
     function hasStandardPlan() {
-      return request.auth.token.stripeRole == 'standard';
+      return request.auth.token.stripeRole == "standard";
+    }
+
+    function hasBasicPlan() {
+      return request.auth.token.stripeRole == "basic";
     }
 
     function hasSubscription() {
-      return hasStandardPlan();
+      return hasStandardPlan() || hasBasicPlan();
     }
     
     // Rules for stripe

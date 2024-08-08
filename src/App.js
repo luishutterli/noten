@@ -2,6 +2,7 @@ import "./App.css";
 import React, { useCallback, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, firestore, getUserClaims } from "./firebase";
+import { settings, loadSettings } from "./settings";
 import { Navigate } from "react-router-dom";
 import Header from "./components/Header";
 import GradeList from "./components/GradeList";
@@ -13,6 +14,7 @@ function App() {
   const [user] = useAuthState(auth);
   const [customClaims, setCustomClaims] = useState(null);
   const [loadingClaims, setLoadingClaims] = useState(true);
+  const [loadingSettings, setLoadingSettings] = useState(true);
 
   const fetchCustomClaims = useCallback(async () => {
     if (!user) return;
@@ -40,13 +42,33 @@ function App() {
           id: doc.id,
           ...doc.data()
         }));
-        setSubjects(subjectsData.filter(subject => subject.type === "subject"));
+        setSubjects(filterSubjectsToHalfterm(subjectsData));
       });
       return unsubscribe;
     } catch (error) {
       console.error("Error fetching subjects: ", error);
     }
   }, [customClaims]);
+
+  const filterSubjectsToHalfterm = (subjects) => {
+    const halfterms = subjects.filter(subject => subject.type === "halfterm");
+    const halfterm = halfterms.find(halfterm => halfterm.name === settings.halfterm);
+    if (!halfterm) throw new Error("Halfterm not found");
+
+    // Recursively resolve subject of each sub group
+    const resolveSubjects = (headGroup, collectedSubjects) => {
+      const members = subjects.filter(subject => headGroup.members.includes(subject.id));
+      for (const member of members) {
+        if(member.type === "subject") 
+          collectedSubjects.push(member);
+        else
+          resolveSubjects(member, collectedSubjects);
+      }
+      return collectedSubjects;
+    }
+
+    return resolveSubjects(halfterm, []);
+  }
 
   const fetchExams = useCallback(() => {
     if (!user) return;
@@ -82,6 +104,22 @@ function App() {
     };
   }, [user, loadingClaims, fetchSubjects, fetchExams]);
 
+
+  // Settings
+  const checkSettings = useCallback(async () => {
+    if (!user) return;
+    await loadSettings();
+    if (settings.halfterm !== undefined) {
+      setLoadingSettings(false);
+      console.log("Settings loaded:", settings);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    checkSettings();
+  }, [checkSettings]);
+
+  
   const handleNewExam = () => {
     setCurrentExam(null);
     setShowExamCard(true);
@@ -128,17 +166,21 @@ function App() {
     setShowExamCard(true);
   };
 
+  if (loadingSettings) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="App">
       <Header />
-      {!user && <Navigate to="/auth" />}
+      {!user?.emailVerified && <Navigate to="/auth" />}
       {user && (
         <div>
           {loadingClaims ? (
             <div>Loading...</div>
           ) : (
             <>
-              {customClaims?.stripeRole !== 'standard' ? (
+              {!customClaims?.stripeRole ? (
                 <Navigate to="/subscription" />
               ) : (
                 <>

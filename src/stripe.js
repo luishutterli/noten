@@ -1,12 +1,27 @@
-import { firestore } from "./firebase";
+import { firestore, app } from "./firebase";
+import { getFunctions, httpsCallable } from "firebase/functions";
 import { collection, addDoc, onSnapshot } from "firebase/firestore";
 
+const createCustomerPortalLink = async (origin) => {
+    try {
+        const functions = getFunctions(app, "europe-west6");
+        const createPortalLink = httpsCallable(functions, "ext-firestore-stripe-payments-createPortalLink");
+        const { data } = await createPortalLink({
+            returnUrl: origin,
+            locale: "auto"
+        });
+        return data.url;
+    } catch (error) {
+        console.error("Error creating customer portal link", error);
+        return null;
+    }
+};
 
 const createSubscriptionCheckout = async (uid, price, origin) => {
     try {
         const docRef = await addDoc(collection(firestore, "customers", uid, "checkout_sessions"), {
             price: price,
-            trial_period_days: 7,
+            trial_period_days: 5,
             allow_promotion_codes: true,
             collect_shipping_address: false,
             success_url: origin,
@@ -30,4 +45,4 @@ const createSubscriptionCheckout = async (uid, price, origin) => {
     }
 };
 
-export { createSubscriptionCheckout };
+export { createSubscriptionCheckout, createCustomerPortalLink };
