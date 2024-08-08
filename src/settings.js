@@ -6,17 +6,6 @@ let settings = {
 };
 
 async function loadSettings() {
-    let unsubscribe = null;
-    if (!auth.currentUser) {
-        unsubscribe = auth.onAuthStateChanged(user => {
-            console.log("Auth state changed, trying to load settings...");
-            if (user) loadSettings();
-            unsubscribe();
-        });
-        console.log("User not logged in, created callback")
-        return;
-    }
-
     const uid = auth.currentUser.uid;
     const docRef = doc(collection(firestore, "customers"), uid);
 
