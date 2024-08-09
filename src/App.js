@@ -3,10 +3,10 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, firestore, getUserClaims } from "./firebase";
 import { settings, loadSettings } from "./settings";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import Header from "./components/Header";
 import GradeList from "./components/GradeList";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import ExamCard from "./components/ExamCard";
 import { collection, query, addDoc, updateDoc, serverTimestamp, where, onSnapshot, doc, deleteDoc } from "firebase/firestore";
 
@@ -16,21 +16,31 @@ function App() {
   const [loadingClaims, setLoadingClaims] = useState(true);
   const [loadingSettings, setLoadingSettings] = useState(true);
 
+  const [showExamCard, setShowExamCard] = useState(false);
+  const [currentExam, setCurrentExam] = useState(null);
+
+  const navigate = useNavigate();
+
+  // Database data
+  const [subjects, setSubjects] = useState([]);
+  const [exams, setExams] = useState([]);
+
+
+  // Fetch functions
   const fetchCustomClaims = useCallback(async () => {
     if (!user) return;
     setLoadingClaims(true);
     const claims = await getUserClaims();
     console.log("Claims:", claims);
+
+    if(!claims.stripeRole) {
+      navigate("/subscription");
+      return;
+    }
+
     setCustomClaims(claims);
     setLoadingClaims(false);
   }, [user]);
-
-  const [showExamCard, setShowExamCard] = useState(false);
-  const [currentExam, setCurrentExam] = useState(null);
-
-  // Database data
-  const [subjects, setSubjects] = useState([]);
-  const [exams, setExams] = useState([]);
 
   const fetchSubjects = useCallback(() => {
     if (!customClaims) return;
@@ -59,7 +69,7 @@ function App() {
     const resolveSubjects = (headGroup, collectedSubjects) => {
       const members = subjects.filter(subject => headGroup.members.includes(subject.id));
       for (const member of members) {
-        if(member.type === "subject") 
+        if (member.type === "subject")
           collectedSubjects.push(member);
         else
           resolveSubjects(member, collectedSubjects);
@@ -89,20 +99,11 @@ function App() {
     }
   }, [user, customClaims]);
 
+
   // Fetch data
   useEffect(() => {
     fetchCustomClaims();
   }, [user, fetchCustomClaims]);
-
-  useEffect(() => {
-    if (loadingClaims || !user) return;
-    const unsubscribeSubjects = fetchSubjects();
-    const unsubscribeExams = fetchExams();
-    return () => {
-      if (unsubscribeSubjects) unsubscribeSubjects();
-      if (unsubscribeExams) unsubscribeExams();
-    };
-  }, [user, loadingClaims, fetchSubjects, fetchExams]);
 
 
   // Settings
@@ -110,16 +111,40 @@ function App() {
     if (!user) return;
     await loadSettings();
     if (settings.halfterm !== undefined) {
-      setLoadingSettings(false);
       console.log("Settings loaded:", settings);
+
+      if (settings.halfterm === null) {
+        navigate("/onboarding");
+      }
+      setLoadingSettings(false);
     }
-  }, [user]);
+  }, [navigate, user]);
 
   useEffect(() => {
     checkSettings();
   }, [checkSettings]);
 
-  
+  useEffect(() => {
+    if (loadingClaims || !user) return;
+    const unsubscribeSubjects = fetchSubjects();
+    const unsubscribeExams = fetchExams();
+
+    const updateExams = async () => {
+      while (!subjects) { }
+      const subjectIds = subjects.map(subject => subject.id);
+      setExams(exams.filter(exam => subjectIds.includes(exam.subject)));
+    };
+
+    updateExams();
+
+    return () => {
+      if (unsubscribeSubjects) unsubscribeSubjects();
+      if (unsubscribeExams) unsubscribeExams();
+    };
+  }, [user, loadingClaims, fetchSubjects, fetchExams]);
+
+
+  // Handlers
   const handleNewExam = () => {
     setCurrentExam(null);
     setShowExamCard(true);
@@ -166,47 +191,40 @@ function App() {
     setShowExamCard(true);
   };
 
-  if (loadingSettings) {
-    return <div>Loading...</div>;
+  if (!user?.emailVerified) {
+    navigate("/auth");
+  }
+
+  if (loadingSettings || loadingClaims) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <CircularProgress />
+      </div>
+    );
   }
 
   return (
     <div className="App">
       <Header />
-      {!user?.emailVerified && <Navigate to="/auth" />}
-      {user && (
-        <div>
-          {loadingClaims ? (
-            <div>Loading...</div>
-          ) : (
-            <>
-              {!customClaims?.stripeRole ? (
-                <Navigate to="/subscription" />
-              ) : (
-                <>
-                  {showExamCard && (
-                    <div className="backdrop">
-                      <ExamCard exam={currentExam} onSave={handleSaveExam} onCancel={handleCancel} onDelete={handelExamDelete} subjects={subjects} />
-                    </div>
-                  )}
-                  <div className="flex flex-col items-center m-2">
-                    <div className="w-full max-w-[850px]">
-                      <div className="w-full flex justify-end mb-4">
-                        <Button variant="contained" color="primary" className="" onClick={handleNewExam}>Neue Prüfung</Button>
-                      </div>
-                      <div className="overflow-x-auto">
-                        <div className="w-[850px] max-w-full">
-                          <GradeList onExamClick={handleExamClick} exams={exams} subjects={subjects} />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </>
-              )}
-            </>
-          )}
+      <div>
+        {showExamCard && (
+          <div className="backdrop">
+            <ExamCard exam={currentExam} onSave={handleSaveExam} onCancel={handleCancel} onDelete={handelExamDelete} subjects={subjects} />
+          </div>
+        )}
+        <div className="flex flex-col items-center m-2">
+          <div className="w-full max-w-[850px]">
+            <div className="w-full flex justify-end mb-4">
+              <Button variant="contained" color="primary" className="" onClick={handleNewExam}>Neue Prüfung</Button>
+            </div>
+            <div className="overflow-x-auto">
+              <div className="w-[850px] max-w-full">
+                <GradeList onExamClick={handleExamClick} exams={exams} subjects={subjects} />
+              </div>
+            </div>
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

@@ -33,6 +33,8 @@ service cloud.firestore {
     match /customers/{uid} {
       allow read: if request.auth.uid == uid;
 
+      allow update: if request.auth.uid == uid;
+
       match /checkout_sessions/{id} {
         allow read, write: if request.auth.uid == uid;
       }

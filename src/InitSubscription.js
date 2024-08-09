@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { auth } from "../firebase";
-import { createSubscriptionCheckout } from "../stripe";
+import { auth } from "./firebase";
+import { createSubscriptionCheckout } from "./stripe";
 import { CircularProgress, Button, Card, CardContent, Typography } from "@mui/material";
 import { useAuthState } from "react-firebase-hooks/auth";
-import "./AuthForm.css"
 
 // All featires and if they are implemented (should show up)
 const allFeatures = {

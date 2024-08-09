@@ -6,7 +6,8 @@ import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AuthForms from "./components/AuthForm";
 import SubjectAdminDashboard from "./components/SubjectAdminDashboard";
-import InitSubscription from "./components/InitSubscription";
+import InitSubscription from "./InitSubscription";
+import Onboarding from "./Onboading";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -16,6 +17,7 @@ root.render(
         <Route path="/" element={<App />} />
         <Route path="/auth" element={<AuthForms />} />
         <Route path="/subscription" element={<InitSubscription />} />
+        <Route path="/onboarding" element={ <Onboarding />} />
         <Route path="/sAdmin" element={<SubjectAdminDashboard />} />
       </Routes>
     </BrowserRouter>

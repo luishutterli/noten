@@ -1,5 +1,5 @@
 import { firestore, auth } from "./firebase";
-import { collection, doc, getDoc } from "firebase/firestore";
+import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
 
 let settings = {
     halfterm: undefined
@@ -17,7 +17,10 @@ async function loadSettings() {
             for (const key in settings) {
                 if (data.hasOwnProperty(key))
                     settings[key] = data[key];
-                else throw new Error("Customer object missing key: " + key);
+                else {
+                    console.error("Customer object missing key:", key);
+                    settings[key] = null;
+                }
             }
         } else throw new Error("Customer object not found");
     } catch (error) {
@@ -25,9 +28,19 @@ async function loadSettings() {
     }
 }
 
-// TODO: Implement, store to the db
-function onSettingsChange(property, value) {
+async function onSettingsChange(property, value) {
     console.log("Settings changed:", property, value);
+    
+    const uid = auth.currentUser.uid;
+    const docRef = doc(collection(firestore, "customers"), uid);
+
+    try {
+        await updateDoc(docRef, {
+            [property]: value
+        });
+   } catch (error) {
+        console.error("Error saving settings:", error);
+    }
 }
 
 const handler = {
