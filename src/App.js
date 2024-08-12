@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, firestore, getUserClaims } from "./firebase";
 import { settings, loadSettings } from "./settings";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Header from "./components/Header";
 import GradeList from "./components/GradeList";
 import { Button, CircularProgress } from "@mui/material";
@@ -15,6 +15,7 @@ function App() {
   const [customClaims, setCustomClaims] = useState(null);
   const [loadingClaims, setLoadingClaims] = useState(true);
   const [loadingSettings, setLoadingSettings] = useState(true);
+  const [loadingSubscriptions, setLoadingSubscriptions] = useState(false);
 
   const [showExamCard, setShowExamCard] = useState(false);
   const [currentExam, setCurrentExam] = useState(null);
@@ -195,7 +196,7 @@ function App() {
     navigate("/auth");
   }
 
-  if (loadingSettings || loadingClaims) {
+  if (loadingSettings || loadingClaims || loadingSubscriptions) {
     return (
       <div className="flex justify-center items-center h-screen">
         <CircularProgress />
@@ -205,7 +206,7 @@ function App() {
 
   return (
     <div className="App">
-      <Header />
+      <Header setLoadingSubscription={setLoadingSubscriptions}/>
       <div>
         {showExamCard && (
           <div className="backdrop">

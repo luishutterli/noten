@@ -1,15 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../firebase";
 import { createCustomerPortalLink } from "../stripe";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle, faCog, faSignOutAlt, faCreditCard } from "@fortawesome/free-solid-svg-icons";
 import { IconButton, Avatar } from "@mui/material";
+import PropTypes from "prop-types";
 
-const Header = () => {
+const Header = ({ setLoadingSubscription }) => {
     const [user] = useAuthState(auth);
     const [dropdownOpen, setDropdownOpen] = useState(false);
-
+    const dropdownRef = useRef(null);
 
     const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
@@ -25,19 +26,37 @@ const Header = () => {
     const handlePortalLink = async (priceId) => {
         if (!user) return;
         try {
+            setLoadingSubscription(true);
             const origin = window.location.origin;
             const url = await createCustomerPortalLink(origin);
             console.log("Redirecting to: ", url);
+            setLoadingSubscription(false);
             window.location.href = url;
         } catch (error) {
             console.error("Error initiating portal link: ", error);
         }
     };
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        document.addEventListener("touchstart", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+            document.removeEventListener("touchstart", handleClickOutside);
+        };
+    }, [dropdownRef]);
+
     return (
-        <header className="flex justify-between items-center p-4 bg-gray-800 text-white" onMouseLeave={() => setDropdownOpen(false)}>
+        <header className="flex justify-between items-center p-4 bg-gray-800 text-white">
             <div className="logo">Noten Rechner</div>
-            <div className="user-section relative">
+            <div className="user-section relative" ref={dropdownRef}>
                 <IconButton onClick={toggleDropdown} tabIndex={0}>
                     <span className="mr-2 text-white">{user?.displayName}</span>
                     {user?.photoURL ? (
@@ -64,6 +83,10 @@ const Header = () => {
             </div>
         </header>
     );
+};
+
+Header.propTypes = {
+    setLoadingSubscription: PropTypes.func.isRequired,
 };
 
 export default Header;

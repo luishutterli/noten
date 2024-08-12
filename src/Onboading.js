@@ -5,6 +5,7 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
 import { Button, CircularProgress, Typography } from "@mui/material";
+import SimpleHalftermEditorCard from "./components/SimpleHalftermEditorCard";
 
 function Onboarding() {
     const [user] = useAuthState(auth);
@@ -12,6 +13,7 @@ function Onboarding() {
     const [customClaims, setCustomClaims] = useState(null);
     const [halfterms, setHalfterms] = useState([]);
     const [selectedHalfterm, setSelectedHalfterm] = useState(null);
+    const [showEditorCard, setShowEditorCard] = useState(false);
     const navigate = useNavigate();
 
     // Fetching function
@@ -33,6 +35,7 @@ function Onboarding() {
             }));
             setHalfterms(halftermsData);
             setLoading(false);
+            console.log("Fetched halfterms:", halftermsData.length);
         } catch (error) {
             console.error("Error fetching halfterms: ", error);
         }
@@ -70,6 +73,11 @@ function Onboarding() {
 
     return (
         <div className="w-full h-full -z-20 bg-gradient-to-b from-indigo-500 to-indigo-800">
+            {showEditorCard && (
+                <div className="backdrop">
+                    <SimpleHalftermEditorCard onCancel={() => setShowEditorCard(false)} user={user}/>
+                </div>
+            )}
             <div className="flex flex-col justify-center items-center h-dvh">
                 <div className="bg-indigo-400 bg-opacity-50 backdrop-blur-lg rounded-lg m-1 p-5">
                     <h2 className="text-2xl font-bold m-2 mb-4 text-white">Welche Fächer?</h2>
@@ -101,7 +109,8 @@ function Onboarding() {
                             </div>
                             <Button
                                 variant="contained"
-                                disabled={true}>
+                                disabled={false}
+                                onClick={() => setShowEditorCard(true)}>
                                 <Typography fontWeight="bold">
                                     Fachstruktur erstellen
                                 </Typography>
