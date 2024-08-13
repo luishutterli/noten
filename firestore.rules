@@ -5,8 +5,10 @@ service cloud.firestore {
 
     // Rules for the subjects collection
     match /subjects/{subject} {
-      allow read: if request.auth != null;
-      allow write: if request.auth.token.admin == true;
+      allow read: if (request.auth != null) && (resource.data.premade || request.auth.uid == resource.data.uid);
+      allow write: if (request.data.premade && request.auth.token.admin == true) || (request.auth.uid == resource.data.uid && !resource.data.premade);
+      // TODO: Check for apropraite subscription
+      // TODO: Update rules
     }
     
     // Rules for the grades collection
