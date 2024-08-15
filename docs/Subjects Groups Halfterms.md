@@ -1,5 +1,6 @@
 # Important
 - **The prefix `um_` on the `name` field needs to be present if the subject is user made (not premade)**
+    - Due to the nature of this we might not need the `premade` field??
 
 # DB Structure
 Firebase Collection `subjects`

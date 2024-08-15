@@ -45,10 +45,10 @@ function App() {
 
   // TODO
   const fetchSubjects = useCallback(async () => {
-    if (!customClaims) return;
+    if (!settings) return;
 
     // New Fetching:
-    // 1. Fetch the halfterm by name from the customClaims
+    // 1. Fetch the halfterm by name from the settings
     // 2. Get the members of the halfterm/group and resolve them
     // 3. If a member is a group, resolve its members (Step 2)
     // 4. If a member is a subject, add it to the subjects list
@@ -57,6 +57,7 @@ function App() {
     try {
       // This causes an error
       // TODO: the premade is required to not get an error
+      console.log("premade", !settings.halfterm.startsWith("um_"));
       const q = query(collection(firestore, "subjects"), where("name", "==", settings.halfterm), where("premade", "==", true), where("type", "==", "halfterm"));
       const queryResults = await getDocs(q);
       const halfterm = queryResults.docs[0].data();

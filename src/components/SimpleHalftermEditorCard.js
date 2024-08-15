@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { firestore } from "../firebase";
-import { Card, CardActions, CardContent, Input, Typography, Button, List, ListItem, ListItemText, TextField } from "@mui/material";
+import { Card, CardActions, CardContent, Typography, Button, List, ListItem, ListItemText, TextField } from "@mui/material";
 import { addDoc, collection } from "firebase/firestore";
 
 function SimpleHalftermEditorCard({ halfterm, user, onCancel }) {
@@ -37,6 +37,10 @@ function SimpleHalftermEditorCard({ halfterm, user, onCancel }) {
     const save = async (halfterm) => {
         try {
             const uid = user.uid;
+
+            if(!halfterm.name.startsWith("um_"))
+                halfterm.name = "um_" + halfterm.name;
+
             const members = await createSubjects(halfterm.subjects);
 
             console.log("Save halfterm", halfterm.name);
@@ -60,6 +64,8 @@ function SimpleHalftermEditorCard({ halfterm, user, onCancel }) {
         const uid = user.uid;
         let subjectIds = [];
         for (const subject of subjects) {
+            if(!subject.name.startsWith("um_"))
+                subject.name = "um_" + subject.name;
             const docRef = await addDoc(collection(firestore, "subjects"), {
                 uid,
                 name: subject.name,
