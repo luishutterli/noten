@@ -8,7 +8,7 @@ import Header from "./components/Header";
 import GradeList from "./components/GradeList";
 import { Button, CircularProgress } from "@mui/material";
 import ExamCard from "./components/ExamCard";
-import { collection, query, addDoc, updateDoc, serverTimestamp, where, onSnapshot, doc, deleteDoc } from "firebase/firestore";
+import { collection, query, addDoc, updateDoc, serverTimestamp, where, onSnapshot, doc, deleteDoc, getDoc, getDocs } from "firebase/firestore";
 
 function App() {
   const [user] = useAuthState(auth);
@@ -43,23 +43,63 @@ function App() {
     setLoadingClaims(false);
   }, [user]);
 
-  const fetchSubjects = useCallback(() => {
+  // TODO
+  const fetchSubjects = useCallback(async () => {
     if (!customClaims) return;
+
+    // New Fetching:
+    // 1. Fetch the halfterm by name from the customClaims
+    // 2. Get the members of the halfterm/group and resolve them
+    // 3. If a member is a group, resolve its members (Step 2)
+    // 4. If a member is a subject, add it to the subjects list
+    // 5. Return the resolved subjects list
+
     try {
-      const q = query(collection(firestore, "subjects"));
-      const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        console.log("fetching subjects source:", querySnapshot.metadata.fromCache ? "cache" : "server");
-        const subjectsData = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        setSubjects(filterSubjectsToHalfterm(subjectsData));
-      });
-      return unsubscribe;
+      // This causes an error
+      // TODO: the premade is required to not get an error
+      const q = query(collection(firestore, "subjects"), where("name", "==", settings.halfterm), where("premade", "==", true), where("type", "==", "halfterm"));
+      const queryResults = await getDocs(q);
+      const halfterm = queryResults.docs[0].data();
+
+      const subjects = await fechtSubjectsFromIds(halfterm.members);
+
+      console.log("halfterm:", halfterm.data());
     } catch (error) {
       console.error("Error fetching subjects: ", error);
     }
   }, [customClaims]);
+
+  const fechtSubjectsFromIds = async (ids) => {
+    const subjects = [];
+    
+    for (let i = 0; i < ids.length; i += 10) {
+      const batchIds = ids.slice(i, i + 10);
+      const q = query(collection(firestore, "subjects"), where("id", "in", batchIds));
+      const queryResults = await getDocs(q);
+      const batchSubjects = queryResults.docs.map(doc => doc.data());
+      subjects.push(...batchSubjects);
+    }
+
+    return subjects;
+  }
+
+  // const fetchSubjects = useCallback(() => {
+  //   if (!customClaims) return;
+  //   try {
+  //     const q = query(collection(firestore, "subjects"));
+  //     const unsubscribe = onSnapshot(q, (querySnapshot) => {
+  //       console.log("fetching subjects source:", querySnapshot.metadata.fromCache ? "cache" : "server");
+  //       const subjectsData = querySnapshot.docs.map(doc => ({
+  //         id: doc.id,
+  //         ...doc.data()
+  //       }));
+  //       setSubjects(filterSubjectsToHalfterm(subjectsData));
+  //     });
+  //     return unsubscribe;
+  //   } catch (error) {
+  //     console.error("Error fetching subjects: ", error);
+  //   }
+  // }, [customClaims]);
 
   const filterSubjectsToHalfterm = (subjects) => {
     const halfterms = subjects.filter(subject => subject.type === "halfterm");
@@ -139,7 +179,7 @@ function App() {
     updateExams();
 
     return () => {
-      if (unsubscribeSubjects) unsubscribeSubjects();
+      // if (unsubscribeSubjects) unsubscribeSubjects();
       if (unsubscribeExams) unsubscribeExams();
     };
   }, [user, loadingClaims, fetchSubjects, fetchExams]);
