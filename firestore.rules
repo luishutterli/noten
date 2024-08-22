@@ -6,7 +6,11 @@ service cloud.firestore {
     // Rules for the subjects collection
     match /subjects/{subject} {
       allow read: if (resource.data.premade && hasStandardPlan()) || request.auth.uid == resource.data.uid;
-      allow write: if (request.data.premade && request.auth.token.admin == true) || (request.auth.uid == resource.data.uid && !resource.data.premade);
+      // allow write: if (request.data.premade && request.auth.token.admin == true) || (request.auth.uid == resource.data.uid && !resource.data.premade);
+      allow create: if (request.resource.data.premade && request.auth.token.admin) || (request.auth.uid == request.resource.data.uid && !request.resource.data.premade);
+      allow update: if (request.resource.data.premade && resource.data.premade && request.auth.token.admin) || (request.auth.uid == resource.data.uid && request.auth.uid == request.resource.data.uid);
+      allow delete: if (resource.data.premaed && request.auth.token.admin) || (request.auth.uid == resource.data.uid && !resource.data.premade);
+      // allow create, update, delete;
     }
     
     // Rules for the grades collection

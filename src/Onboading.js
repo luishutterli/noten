@@ -27,7 +27,7 @@ function Onboarding() {
     
     const fetchHalfterms = useCallback(async () => {
         try {
-            const q = query(collection(firestore, "subjects"), where("type", "==", "halfterm"));
+            const q = query(collection(firestore, "subjects"), where("premade", "==", true),where("type", "==", "halfterm"));
             const querySnapshot = await getDocs(q);
             const halftermsData = querySnapshot.docs.map(doc => ({
                 id: doc.id,
@@ -59,6 +59,13 @@ function Onboarding() {
         navigate("/");
     };
 
+    const handleNewHalfterm = async (name) => {
+        settings.halfterm = name;
+        setLoading(true);
+        await new Promise(r => setTimeout(r, 100));
+        navigate("/");
+    };
+
 
 
     if (loading || !user) {
@@ -75,7 +82,7 @@ function Onboarding() {
         <div className="w-full h-full -z-20 bg-gradient-to-b from-indigo-500 to-indigo-800">
             {showEditorCard && (
                 <div className="backdrop">
-                    <SimpleHalftermEditorCard onCancel={() => setShowEditorCard(false)} user={user}/>
+                    <SimpleHalftermEditorCard onCancel={() => setShowEditorCard(false)} user={user} handle={handleNewHalfterm} />
                 </div>
             )}
             <div className="flex flex-col justify-center items-center h-dvh">

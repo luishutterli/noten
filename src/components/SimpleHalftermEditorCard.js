@@ -4,7 +4,7 @@ import { firestore } from "../firebase";
 import { Card, CardActions, CardContent, Typography, Button, List, ListItem, ListItemText, TextField } from "@mui/material";
 import { addDoc, collection } from "firebase/firestore";
 
-function SimpleHalftermEditorCard({ halfterm, user, onCancel }) {
+function SimpleHalftermEditorCard({ halfterm, user, onCancel, handle }) {
     // Halfterm fields
     const [name, setName] = useState(halfterm ? halfterm.name : "Untitled");
     const [subjects, setSubjects] = useState(halfterm ? halfterm.subjects.sort((a, b) => a.name.localeCompare(b.name)) : []);
@@ -54,7 +54,9 @@ function SimpleHalftermEditorCard({ halfterm, user, onCancel }) {
                 weight: 1,
                 premade: false,
             });
+            console.log("Halfterm saved");
 
+            handle(halfterm.name);
         } catch (error) {
             console.error("Error saving halfterm", error);
         }
@@ -144,6 +146,7 @@ function SimpleHalftermEditorCard({ halfterm, user, onCancel }) {
 SimpleHalftermEditorCard.propTypes = {
     halfterm: PropTypes.object,
     user: PropTypes.object.isRequired,
+    handle: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
 };
 

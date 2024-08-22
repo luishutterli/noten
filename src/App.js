@@ -8,7 +8,7 @@ import Header from "./components/Header";
 import GradeList from "./components/GradeList";
 import { Button, CircularProgress } from "@mui/material";
 import ExamCard from "./components/ExamCard";
-import { collection, query, addDoc, updateDoc, serverTimestamp, where, onSnapshot, doc, deleteDoc, getDoc, getDocs } from "firebase/firestore";
+import { collection, query, addDoc, updateDoc, serverTimestamp, where, onSnapshot, doc, deleteDoc, getDoc, getDocs, documentId } from "firebase/firestore";
 
 function App() {
   const [user] = useAuthState(auth);
@@ -43,84 +43,53 @@ function App() {
     setLoadingClaims(false);
   }, [user]);
 
-  // TODO
-  const fetchSubjects = useCallback(async () => {
-    if (!settings) return;
-
-    // New Fetching:
-    // 1. Fetch the halfterm by name from the settings
-    // 2. Get the members of the halfterm/group and resolve them
-    // 3. If a member is a group, resolve its members (Step 2)
-    // 4. If a member is a subject, add it to the subjects list
-    // 5. Return the resolved subjects list
-
-    try {
-      // This causes an error
-      // TODO: the premade is required to not get an error
-      console.log("premade", !settings.halfterm.startsWith("um_"));
-      const q = query(collection(firestore, "subjects"), where("name", "==", settings.halfterm), where("premade", "==", true), where("type", "==", "halfterm"));
-      const queryResults = await getDocs(q);
-      const halfterm = queryResults.docs[0].data();
-
-      const subjects = await fechtSubjectsFromIds(halfterm.members);
-
-      console.log("halfterm:", halfterm.data());
-    } catch (error) {
-      console.error("Error fetching subjects: ", error);
-    }
-  }, [customClaims]);
-
-  const fechtSubjectsFromIds = async (ids) => {
+  const fechtSubjectsFromIds = async (ids, premade) => {
     const subjects = [];
-    
-    for (let i = 0; i < ids.length; i += 10) {
-      const batchIds = ids.slice(i, i + 10);
-      const q = query(collection(firestore, "subjects"), where("id", "in", batchIds));
+
+    const itterations = Math.ceil(ids.length / 10);
+
+    for (let i = 0; i < itterations; i++) {
+      const batchIds = ids.slice(i * 10, (i + 1) * 10);
+      const q = query(collection(firestore, "subjects"), where("premade", "==", premade), where(documentId(), "in", batchIds));
       const queryResults = await getDocs(q);
-      const batchSubjects = queryResults.docs.map(doc => doc.data());
+      const batchSubjects = queryResults.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
       subjects.push(...batchSubjects);
     }
-
     return subjects;
   }
 
-  // const fetchSubjects = useCallback(() => {
-  //   if (!customClaims) return;
-  //   try {
-  //     const q = query(collection(firestore, "subjects"));
-  //     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-  //       console.log("fetching subjects source:", querySnapshot.metadata.fromCache ? "cache" : "server");
-  //       const subjectsData = querySnapshot.docs.map(doc => ({
-  //         id: doc.id,
-  //         ...doc.data()
-  //       }));
-  //       setSubjects(filterSubjectsToHalfterm(subjectsData));
-  //     });
-  //     return unsubscribe;
-  //   } catch (error) {
-  //     console.error("Error fetching subjects: ", error);
-  //   }
-  // }, [customClaims]);
-
-  const filterSubjectsToHalfterm = (subjects) => {
-    const halfterms = subjects.filter(subject => subject.type === "halfterm");
-    const halfterm = halfterms.find(halfterm => halfterm.name === settings.halfterm);
-    if (!halfterm) throw new Error("Halfterm not found");
-
-    // Recursively resolve subject of each sub group
-    const resolveSubjects = (headGroup, collectedSubjects) => {
-      const members = subjects.filter(subject => headGroup.members.includes(subject.id));
-      for (const member of members) {
-        if (member.type === "subject")
-          collectedSubjects.push(member);
-        else
-          resolveSubjects(member, collectedSubjects);
-      }
-      return collectedSubjects;
+  const resolveSubjects = useCallback(async (headGroup, collectedSubjects, premade) => {
+    const members = await fechtSubjectsFromIds(headGroup.members, premade);
+    for (const member of members) {
+      if (member.type === "subject")
+        collectedSubjects.push(member);
+      else
+        resolveSubjects(member, collectedSubjects, premade);
     }
+    return collectedSubjects;
+  }, []);
 
-    return resolveSubjects(halfterm, []);
-  }
+  const fetchSubjects = useCallback(async () => {
+    if (!settings.halfterm) return;
+
+    try {
+      console.log("premade", !settings.halfterm.startsWith("um_"));
+      const premade = !settings.halfterm.startsWith("um_");
+      const queryResults = await getDocs(query(collection(firestore, "subjects"), where("premade", "==", premade), where("type", "==", "halfterm"),where("name", "==", settings.halfterm)));
+      const halfterm = queryResults.docs[0].data();
+
+      const subjects = await resolveSubjects(halfterm, [], premade);
+      console.log("Subjects:", subjects);
+      setSubjects(subjects);
+    } catch (error) {
+      console.error("Error fetching subjects: ", error);
+    }
+  }, [resolveSubjects]);
+
+
 
   const fetchExams = useCallback(() => {
     if (!user) return;
@@ -147,7 +116,6 @@ function App() {
     fetchCustomClaims();
   }, [user, fetchCustomClaims]);
 
-
   // Settings
   const checkSettings = useCallback(async () => {
     if (!user) return;
@@ -168,9 +136,11 @@ function App() {
 
   useEffect(() => {
     if (loadingClaims || !user) return;
-    const unsubscribeSubjects = fetchSubjects();
+    if(subjects.length > 0) return;
+    fetchSubjects();
     const unsubscribeExams = fetchExams();
 
+    // TODO: Replace this with smart fetching, not client side filtering
     const updateExams = async () => {
       while (!subjects) { }
       const subjectIds = subjects.map(subject => subject.id);
@@ -180,7 +150,6 @@ function App() {
     updateExams();
 
     return () => {
-      // if (unsubscribeSubjects) unsubscribeSubjects();
       if (unsubscribeExams) unsubscribeExams();
     };
   }, [user, loadingClaims, fetchSubjects, fetchExams]);
