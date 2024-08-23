@@ -50,7 +50,12 @@ function App() {
 
     for (let i = 0; i < itterations; i++) {
       const batchIds = ids.slice(i * 10, (i + 1) * 10);
-      const q = query(collection(firestore, "subjects"), where("premade", "==", premade), where(documentId(), "in", batchIds));
+      let q;
+      if (premade) {
+        q = query(collection(firestore, "subjects"), where("premade", "==", premade), where(documentId(), "in", batchIds));
+      } else {
+        q = query(collection(firestore, "subjects"), where("premade", "==", premade), where(documentId(), "in", batchIds), where("uid", "==", user.uid));
+      }
       const queryResults = await getDocs(q);
       const batchSubjects = queryResults.docs.map(doc => ({
         id: doc.id,
@@ -78,7 +83,13 @@ function App() {
     try {
       console.log("premade", !settings.halfterm.startsWith("um_"));
       const premade = !settings.halfterm.startsWith("um_");
-      const queryResults = await getDocs(query(collection(firestore, "subjects"), where("premade", "==", premade), where("type", "==", "halfterm"),where("name", "==", settings.halfterm)));
+      let q;
+      if (premade) {
+        q = query(collection(firestore, "subjects"), where("premade", "==", premade), where("type", "==", "halfterm"),where("name", "==", settings.halfterm)); 
+      } else {
+        q = query(collection(firestore, "subjects"), where("premade", "==", premade), where("type", "==", "halfterm"), where("uid", "==", user.uid), where("name", "==", settings.halfterm));
+      }
+      const queryResults = await getDocs(q);
       const halfterm = queryResults.docs[0].data();
 
       const subjects = await resolveSubjects(halfterm, [], premade);
