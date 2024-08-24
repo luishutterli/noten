@@ -9,6 +9,8 @@ import GradeList from "./components/GradeList";
 import { Button, CircularProgress } from "@mui/material";
 import ExamCard from "./components/ExamCard";
 import { collection, query, addDoc, updateDoc, serverTimestamp, where, onSnapshot, doc, deleteDoc, getDoc, getDocs, documentId } from "firebase/firestore";
+import LandingPage from "./LandingPage";
+import CookieConsent from "./components/CookieConsent";
 
 function App() {
   const [user] = useAuthState(auth);
@@ -43,7 +45,7 @@ function App() {
     setLoadingClaims(false);
   }, [user]);
 
-  const fechtSubjectsFromIds = async (ids, premade) => {
+  const fechtSubjectsFromIds = async (ids, premade, uid) => {
     const subjects = [];
 
     const itterations = Math.ceil(ids.length / 10);
@@ -54,7 +56,7 @@ function App() {
       if (premade) {
         q = query(collection(firestore, "subjects"), where("premade", "==", premade), where(documentId(), "in", batchIds));
       } else {
-        q = query(collection(firestore, "subjects"), where("premade", "==", premade), where(documentId(), "in", batchIds), where("uid", "==", user.uid));
+        q = query(collection(firestore, "subjects"), where("premade", "==", premade), where(documentId(), "in", batchIds), where("uid", "==", uid));
       }
       const queryResults = await getDocs(q);
       const batchSubjects = queryResults.docs.map(doc => ({
@@ -66,8 +68,8 @@ function App() {
     return subjects;
   }
 
-  const resolveSubjects = useCallback(async (headGroup, collectedSubjects, premade) => {
-    const members = await fechtSubjectsFromIds(headGroup.members, premade);
+  const resolveSubjects = useCallback(async (headGroup, collectedSubjects, premade, uid) => {
+    const members = await fechtSubjectsFromIds(headGroup.members, premade, uid);
     for (const member of members) {
       if (member.type === "subject")
         collectedSubjects.push(member);
@@ -78,6 +80,7 @@ function App() {
   }, []);
 
   const fetchSubjects = useCallback(async () => {
+    if (!user) return;
     if (!settings.halfterm) return;
 
     try {
@@ -92,13 +95,21 @@ function App() {
       const queryResults = await getDocs(q);
       const halfterm = queryResults.docs[0].data();
 
-      const subjects = await resolveSubjects(halfterm, [], premade);
-      console.log("Subjects:", subjects);
+      let subjects = await resolveSubjects(halfterm, [], premade, user.uid);
+      if (!premade) {
+        subjects = subjects.map(subject => {
+          return {
+            ...subject,
+            name: subject.name.substring(3)
+          };
+        });
+      }
+      console.log("Subjectsss:", subjects);
       setSubjects(subjects);
     } catch (error) {
       console.error("Error fetching subjects: ", error);
     }
-  }, [resolveSubjects]);
+  }, [user, resolveSubjects]);
 
 
 
@@ -213,6 +224,10 @@ function App() {
     setShowExamCard(true);
   };
 
+  if (!user) {
+    return <LandingPage />;
+  }
+
   if (!user?.emailVerified) {
     navigate("/auth");
   }
@@ -247,6 +262,7 @@ function App() {
           </div>
         </div>
       </div>
+      <CookieConsent />
     </div>
   );
 }

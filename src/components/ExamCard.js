@@ -7,7 +7,7 @@ const ExamCard = ({ exam, onSave, onCancel, onDelete, subjects }) => {
     const today = new Date().toISOString().split("T")[0];
 
     const findSubjectIdByDName = (name) => {
-        let subj = subjects.find(subj => (subj.name + (subj.teacher && ` (${subj.teacher})`)) === name);
+        let subj = subjects.find(subj => subj.name === name);
         return subj?.id || "";
     };
     const findSubjectDNameById = (id) => {
@@ -53,7 +53,7 @@ const ExamCard = ({ exam, onSave, onCancel, onDelete, subjects }) => {
 
     const handleSave = () => {
         let newExam = {};
-        if(exam.id)
+        if(exam)
             newExam = { id: exam.id, subject: findSubjectIdByDName(subject), date: date, name: name, grade: grade, weight: weight };
         else
             newExam = { subject: findSubjectIdByDName(subject), date: date, name: name, grade: grade, weight: weight };

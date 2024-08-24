@@ -38,9 +38,6 @@ function SimpleHalftermEditorCard({ halfterm, user, onCancel, handle }) {
         try {
             const uid = user.uid;
 
-            if(!name.startsWith("um_"))
-                setName("um_" + name);
-
             const members = await createSubjects(subjects);
 
             console.log("Save halfterm", name);
@@ -48,7 +45,7 @@ function SimpleHalftermEditorCard({ halfterm, user, onCancel, handle }) {
 
             await addDoc(collection(firestore, "subjects"), {
                 uid,
-                name: name,
+                name: "um_" + name,
                 members,
                 type: "halfterm",
                 weight: 1,
@@ -56,7 +53,7 @@ function SimpleHalftermEditorCard({ halfterm, user, onCancel, handle }) {
             });
             console.log("Halfterm saved");
 
-            handle(halfterm.name);
+            handle("um_" + name);
         } catch (error) {
             console.error("Error saving halfterm", error);
         }

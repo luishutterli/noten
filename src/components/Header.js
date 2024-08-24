@@ -30,8 +30,8 @@ const Header = ({ setLoadingSubscription }) => {
             const origin = window.location.origin;
             const url = await createCustomerPortalLink(origin);
             console.log("Redirecting to: ", url);
-            setLoadingSubscription(false);
             window.location.href = url;
+            setLoadingSubscription(false);
         } catch (error) {
             console.error("Error initiating portal link: ", error);
         }
