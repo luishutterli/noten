@@ -18,8 +18,21 @@
                 "source": true
               }
             }
+          },
+          {
+            "id": "8f8355d8bae037e4",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Roadmap.md",
+                "mode": "source",
+                "source": true
+              }
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -69,7 +82,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "f1b0b220133b608a",
@@ -85,7 +99,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Subjects Groups Halfterms.md",
+                "file": "Roadmap.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +116,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Subjects Groups Halfterms.md",
+                "file": "Roadmap.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +139,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Subjects Groups Halfterms.md"
+                "file": "Roadmap.md"
               }
             }
           }
@@ -146,8 +160,9 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "adbfea922e0288a1",
+  "active": "8f8355d8bae037e4",
   "lastOpenFiles": [
-    "Subjects Groups Halfterms.md"
+    "Subjects Groups Halfterms.md",
+    "Roadmap.md"
   ]
 }
