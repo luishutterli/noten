@@ -80,7 +80,7 @@ function PrivacyPolicy() {
             <h2>2. Kontaktinformationen</h2>
             <p>
                 Bei Fragen oder Anliegen zum Schutz Ihrer Daten durch uns erreichen Sie
-                uns jederzeit per E-Mail unter lshutterli@gmail.com. Verantwortlich für
+                uns jederzeit per E-Mail unter luis@noten-rechner.ch. Verantwortlich für
                 die Datenbearbeitungen, die über diese Website erfolgen, ist:
             </p>
             <br />
@@ -98,7 +98,7 @@ function PrivacyPolicy() {
                 <br />
                 Luis Sascha Hutterli
                 <br />
-                lshutterli@gmail.com
+                luis@noten-rechner.ch
                 <br />
                 +41 79 874 04 48
             </p>
@@ -276,7 +276,7 @@ function PrivacyPolicy() {
             <p>
                 Sie können jederzeit eine Auskunft über die von uns über Sie
                 gespeicherten Daten verlangen. Wir bitten Sie, Ihr Auskunftsgesuch
-                zusammen mit einem Identitätsnachweis an lshutterli@gmail.com zu senden.
+                zusammen mit einem Identitätsnachweis an luis@noten-rechner.ch zu senden.
                 <br />
                 <br />
                 Sie haben ausserdem das Recht, Ihre Daten in einem gängigen Dateiformat

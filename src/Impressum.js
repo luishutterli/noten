@@ -16,7 +16,7 @@ function Impressum() {
             <p style={{ ...commonStyle, margin: "0 0 15px !important" }}>Schweiz</p>
             <p style={{ ...commonStyle, margin: "0 0 15px !important" }}>
                 <strong>E-Mail:</strong>
-                <a href="mailto:lshutterli@gmail.com">lshutterli@gmail.com</a>
+                <a href="mailto:luis@noten-rechner.ch">luis@noten-rechner.ch</a>
             </p>
             <p style={{ ...commonStyle, margin: "0 0 15px !important" }}>
                 <strong>Telefonnummer:</strong> +41 79 874 04 48
