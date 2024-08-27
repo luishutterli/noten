@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const GradeList = ({ onExamClick, exams, subjects }) => {
+const ExamListTable = ({ onExamClick, exams, subjects }) => {
 
   const formatDate = (date) => {
     const [year, month, day] = date.split("-");
@@ -43,10 +43,10 @@ const GradeList = ({ onExamClick, exams, subjects }) => {
   );
 };
 
-GradeList.propTypes = {
+ExamListTable.propTypes = {
   onExamClick: PropTypes.func.isRequired,
   exams: PropTypes.array.isRequired,
   subjects: PropTypes.array.isRequired,
 };
 
-export default GradeList;
+export default ExamListTable;

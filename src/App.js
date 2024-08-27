@@ -5,7 +5,7 @@ import { auth, firestore, getUserClaims } from "./firebase";
 import { settings, loadSettings } from "./settings";
 import { useNavigate } from "react-router-dom";
 import Header from "./components/Header";
-import GradeList from "./components/GradeList";
+import ExamListTable from "./components/ExamListTable";
 import { Button, CircularProgress } from "@mui/material";
 import ExamCard from "./components/ExamCard";
 import { collection, query, addDoc, updateDoc, serverTimestamp, where, onSnapshot, doc, deleteDoc, getDoc, getDocs, documentId } from "firebase/firestore";
@@ -140,7 +140,7 @@ function App() {
 
   // Settings
   const checkSettings = useCallback(async () => {
-    if (!user) return;
+    if (!user?.emailVerified) return;
     await loadSettings();
     if (settings.halfterm !== undefined) {
       console.log("Settings loaded:", settings);
@@ -256,7 +256,7 @@ function App() {
             </div>
             <div className="overflow-x-auto">
               <div className="w-[850px] max-w-full">
-                <GradeList onExamClick={handleExamClick} exams={exams} subjects={subjects} />
+                <ExamListTable onExamClick={handleExamClick} exams={exams} subjects={subjects} />
               </div>
             </div>
           </div>
