@@ -11,6 +11,7 @@ import ExamCard from "./components/ExamCard";
 import { collection, query, addDoc, updateDoc, serverTimestamp, where, onSnapshot, doc, deleteDoc, getDoc, getDocs, documentId } from "firebase/firestore";
 import LandingPage from "./LandingPage";
 import CookieConsent from "./components/CookieConsent";
+import SemesterGradeView from "./SemesterGradeView";
 
 function App() {
   const [user] = useAuthState(auth);
@@ -21,6 +22,8 @@ function App() {
 
   const [showExamCard, setShowExamCard] = useState(false);
   const [currentExam, setCurrentExam] = useState(null);
+
+  const [showSemesterGradeView, setShowSemesterGradeView] = useState(false);
 
   const navigate = useNavigate();
 
@@ -240,6 +243,15 @@ function App() {
     );
   }
 
+  if(showSemesterGradeView) {
+    return (
+      <div className="App">
+        <Header setLoadingSubscription={setLoadingSubscriptions}/>
+        <SemesterGradeView exams={exams} subjects={subjects} onCancel={() => setShowSemesterGradeView(false)}/>
+      </div>
+    );
+  }
+
   return (
     <div className="App">
       <Header setLoadingSubscription={setLoadingSubscriptions}/>
@@ -251,8 +263,9 @@ function App() {
         )}
         <div className="flex flex-col items-center m-2">
           <div className="w-full max-w-[850px]">
-            <div className="w-full flex justify-end mb-4">
-              <Button variant="contained" color="primary" className="" onClick={handleNewExam}>Neue Prüfung</Button>
+            <div className="w-full flex justify-between mb-4">
+              <Button variant="contained" color="primary" onClick={() => setShowSemesterGradeView(true)}>Zeugnis</Button>
+              <Button variant="contained" color="primary" onClick={handleNewExam}>Neue Prüfung</Button>
             </div>
             <div className="overflow-x-auto">
               <div className="w-[850px] max-w-full">

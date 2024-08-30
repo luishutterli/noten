@@ -62,7 +62,7 @@ function LandingPage() {
               <div className="bg-white text-black p-6 rounded-lg shadow-lg">
                 <h3 className="text-2xl font-bold mb-2">Standard</h3>
                 <p className="mb-2">Alle Funktionen, Keine Werbung ...</p>
-                <p className="mb-2">Monatlich: <b>1.00 Fr.</b></p>
+                <p className="mb-2">Monatlich: <b>1.25 Fr.</b></p>
                 <p className="mb-2">Jährlich: <b>10.00 Fr.</b></p>
                 <Button variant="contained" color="primary" onClick={() => navigate("/auth")}>
                   Starten
@@ -74,7 +74,7 @@ function LandingPage() {
       </main>
       <footer className="w-full py-6 bg-opacity-75 bg-indigo-700">
         <div className="container mx-auto text-center">
-          <p>&copy; 2024 Noten Rechner von Luis Hutterli. Alle Rechte vorbehalten.</p>
+          <p>&copy; 2024 Noten Rechner von Luis Hutterli. Alle Rechte vorbehalten. Kontakt: <a href="mailto:luis@noten-rechner.ch">luis@noten-rechner.ch</a> </p>
           <div className="mt-4">
             <a href="/impressum" className="text-white mx-2 underline">Impressum</a>
             <a href="/privacy" className="text-white mx-2 underline">Datenschutzrichtlinie</a>

@@ -124,7 +124,7 @@ function InitSubscription() {
                                         variant="contained"
                                         onClick={() => handleSubscription(priceIds.standard)}>
                                         <Typography fontWeight="bold">
-                                            1.00 CHF / Monat
+                                            1.25 CHF / Monat
                                         </Typography>
                                     </Button>
                                     <Button
