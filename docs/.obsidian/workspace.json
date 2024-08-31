@@ -31,8 +31,7 @@
               }
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -99,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Roadmap.md",
+                "file": "Subjects Groups Halfterms.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -116,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Roadmap.md",
+                "file": "Subjects Groups Halfterms.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -139,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Roadmap.md"
+                "file": "Subjects Groups Halfterms.md"
               }
             }
           }
@@ -160,9 +159,9 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "8f8355d8bae037e4",
+  "active": "adbfea922e0288a1",
   "lastOpenFiles": [
-    "Subjects Groups Halfterms.md",
-    "Roadmap.md"
+    "Roadmap.md",
+    "Subjects Groups Halfterms.md"
   ]
 }

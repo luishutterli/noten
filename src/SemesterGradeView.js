@@ -1,9 +1,77 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import GradeListTable from "./components/GradeListTable";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
+import { sum } from "firebase/firestore";
 
-function SemesterGradeView({ exams, subjects, onCancel }) {
+function SemesterGradeView({ exams, subjects, groups, onCancel }) {
+    const [loading, setLoading] = useState(true);
+    const [averagedGrades, setAveragedGrades] = useState(null);
+    const [groupedAveragedGrades, setGroupedAveragedGrades] = useState(null);
+
+    // Calculate the averaged grades for each subject
+    useEffect(() => {
+        const calculateAveragedGrades = () => {
+            let avgGrades = {};
+            for (const subject of subjects) {
+                const subjectExams = exams.filter(exam => exam.subject === subject.id);
+                let sumProd = 0;
+                let sumWeight = 0;
+                for (const exam of subjectExams) {
+                    sumProd += Number(exam.grade) * Number(exam.weight);
+                    sumWeight += Number(exam.weight);
+                }
+                avgGrades[subject.id] = sumProd / sumWeight;
+            }
+            setAveragedGrades(avgGrades);
+            setLoading(false);
+        };
+        const calculateGroupedAveragedGrades = () => {
+            let grpAvgGrades = {};
+            const subjectsAndGroups = subjects.concat(groups);
+            const calculateForGroup = (group) => {
+                console.log("Calculating for group", group);
+                const members = subjectsAndGroups.filter(subject => group.members.includes(subject.id));
+                let sumProd = 0;
+                let sumWeight = 0;
+                for (const member of members) {
+                    if (member.type === "group") {
+                        calculateForGroup(member);
+                        if(isNaN(averagedGrades[member.id])) continue;
+                        sumProd += Number(grpAvgGrades[member.id]) * Number(member.weight);
+                        sumWeight += Number(member.weight);
+                        continue;
+                    }
+                    if(isNaN(averagedGrades[member.id])) continue;
+                    sumProd += Number(averagedGrades[member.id]) * Number(member.weight);
+                    sumWeight += Number(member.weight);
+                }
+                console.log(group.name, sumProd, sumWeight);
+                grpAvgGrades[group.id] = sumProd / sumWeight;
+            };
+
+            // The Halfterm is by definition the first group
+            calculateForGroup(groups[0]);
+            console.log("Grouped Averaged Grades", grpAvgGrades);
+
+            setGroupedAveragedGrades(grpAvgGrades);
+        };
+        
+        if (!averagedGrades)
+            calculateAveragedGrades();
+        if (!groupedAveragedGrades && averagedGrades)
+            calculateGroupedAveragedGrades();
+    }, [exams, subjects, averagedGrades, groups, groupedAveragedGrades]);
+
+
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-full">
+                <CircularProgress />
+            </div>
+        );
+    }
 
     return (
         <div>
@@ -16,7 +84,7 @@ function SemesterGradeView({ exams, subjects, onCancel }) {
                         </div>
                         <div className="overflow-x-auto">
                             <div className="w-[850px] max-w-full">
-                                <GradeListTable exams={exams} subjects={subjects} />
+                                <GradeListTable averagedGrades={averagedGrades} subjects={subjects} />
                             </div>
                         </div>
                     </div>
@@ -29,6 +97,7 @@ function SemesterGradeView({ exams, subjects, onCancel }) {
 SemesterGradeView.propTypes = {
     exams: PropTypes.array.isRequired,
     subjects: PropTypes.array.isRequired,
+    groups: PropTypes.array.isRequired,
     onCancel: PropTypes.func.isRequired,
 };
 

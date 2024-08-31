@@ -13,5 +13,5 @@ Firebase Collection `subjects`
 - `uid`: User ID of the owning user, `(string)` -> Used in type subject, group and halfterm if user made (not premade)
 - `teacher`: Teacher Name, `(string)` -> Used in type subject
 - `members`: Array of id's to sub-subjects(or groups), `(array of strings)` -> Used in type halfterm and group
-
+- `groupings`: Grouping for advanced report card view, `(map (group:array), array of strings (ids to subjects))`
 

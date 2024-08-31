@@ -29,6 +29,7 @@ function App() {
 
   // Database data
   const [subjects, setSubjects] = useState([]);
+  const [groups, setGroups] = useState([]);
   const [exams, setExams] = useState([]);
 
 
@@ -71,15 +72,17 @@ function App() {
     return subjects;
   }
 
-  const resolveSubjects = useCallback(async (headGroup, collectedSubjects, premade, uid) => {
+  const resolveSubjects = useCallback(async (headGroup, collectedSubjects, collectedGroups, premade, uid) => {
     const members = await fechtSubjectsFromIds(headGroup.members, premade, uid);
     for (const member of members) {
       if (member.type === "subject")
         collectedSubjects.push(member);
-      else
-        resolveSubjects(member, collectedSubjects, premade);
+      else {
+        collectedGroups.push(member);
+        resolveSubjects(member, collectedSubjects, collectedGroups, premade, uid);
+      }
     }
-    return collectedSubjects;
+    return [collectedSubjects, collectedGroups];
   }, []);
 
   const fetchSubjects = useCallback(async () => {
@@ -96,9 +99,14 @@ function App() {
         q = query(collection(firestore, "subjects"), where("premade", "==", premade), where("type", "==", "halfterm"), where("uid", "==", user.uid), where("name", "==", settings.halfterm));
       }
       const queryResults = await getDocs(q);
-      const halfterm = queryResults.docs[0].data();
+      const halfterm = {
+        id: queryResults.docs[0].id,
+        ...queryResults.docs[0].data()
+      };
 
-      let subjects = await resolveSubjects(halfterm, [], premade, user.uid);
+
+
+      let [subjects, groups] = await resolveSubjects(halfterm, [], [halfterm], premade, user.uid);
       if (!premade) {
         subjects = subjects.map(subject => {
           return {
@@ -106,9 +114,17 @@ function App() {
             name: subject.name.substring(3)
           };
         });
+        groups = groups.map(group => {
+          return {
+            ...group,
+            name: group.name.substring(3)
+          };
+        });
       }
       console.log("Subjectsss:", subjects);
+      console.log("Groupsss:", groups);
       setSubjects(subjects);
+      setGroups(groups);
     } catch (error) {
       console.error("Error fetching subjects: ", error);
     }
@@ -247,7 +263,7 @@ function App() {
     return (
       <div className="App">
         <Header setLoadingSubscription={setLoadingSubscriptions}/>
-        <SemesterGradeView exams={exams} subjects={subjects} onCancel={() => setShowSemesterGradeView(false)}/>
+        <SemesterGradeView exams={exams} subjects={subjects} groups={groups} onCancel={() => setShowSemesterGradeView(false)}/>
       </div>
     );
   }

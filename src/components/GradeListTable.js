@@ -1,33 +1,8 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import PropTypes from "prop-types";
-import { CircularProgress } from "@mui/material";
 
-function GradeListTable({ exams, subjects }) {
-    const [averagedGrades, setAveragedGrades] = useState(null);
+function GradeListTable({ averagedGrades, subjects }) {
     const [tooltip, setTooltip] = useState({ visible: false, content: "", position: { x: 0, y: 0 } });
-
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const calculateAveragedGrades = () => {
-            let avgGrades = {};
-            for (const subject of subjects) {
-                const subjectExams = exams.filter(exam => exam.subject === subject.id);
-                let sumProd = 0;
-                let sumWeight = 0;
-                for (const exam of subjectExams) {
-                    sumProd += Number(exam.grade) * Number(exam.weight);
-                    sumWeight += Number(exam.weight);
-                }
-                avgGrades[subject.id] = sumProd / sumWeight;
-            }
-            setAveragedGrades(avgGrades);
-            setLoading(false);
-        };
-    
-        if (!averagedGrades)
-        calculateAveragedGrades();
-    }, [averagedGrades, exams, subjects]);
 
     const round = (value, decimals) => {
         const roundedValue = Math.round(value * Math.pow(10, decimals)) / Math.pow(10, decimals);
@@ -50,23 +25,6 @@ function GradeListTable({ exams, subjects }) {
       const handleMouseLeave = useCallback(() => {
         setTooltip({ visible: false, content: "", position: { x: 0, y: 0 } });
       }, []);
-    
-      const handleClick = useCallback((event, grade) => {
-        if (isNaN(grade)) return;
-        setTooltip({
-          visible: true,
-          content: `Note: ${round(grade, 3)}`,
-          position: { x: event.clientX, y: event.clientY }
-        });
-      }, []);
-
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center h-screen">
-              <CircularProgress />
-            </div>
-          );
-    }
 
     return (
         <div>
@@ -87,7 +45,6 @@ function GradeListTable({ exams, subjects }) {
                                 className="even:bg-gray-100 cursor-pointer hover:bg-slate-300"
                                 onMouseEnter={(e) => handleMouseEnter(e, grade)}
                                 onMouseLeave={handleMouseLeave}
-                                onClick={(e) => handleClick(e, grade)}
                             >
                                 <td className="border p-2">{subject.name}</td>
                                 <td className="border p-2">{displayedGrade}</td>
@@ -109,7 +66,7 @@ function GradeListTable({ exams, subjects }) {
 }
 
 GradeListTable.propTypes = {
-    exams: PropTypes.array.isRequired,
+    averagedGrades: PropTypes.object.isRequired,
     subjects: PropTypes.array.isRequired,
 };
 
