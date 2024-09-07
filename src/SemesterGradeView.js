@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import GradeListTable from "./components/GradeListTable";
 import { Button, CircularProgress } from "@mui/material";
-import { sum } from "firebase/firestore";
 
 function SemesterGradeView({ exams, subjects, groups, onCancel }) {
     const [loading, setLoading] = useState(true);
@@ -11,6 +10,9 @@ function SemesterGradeView({ exams, subjects, groups, onCancel }) {
 
     // Calculate the averaged grades for each subject
     useEffect(() => {
+        const mround = (value, multiple) => {
+            return Math.round(value / multiple) * multiple;
+        };
         const calculateAveragedGrades = () => {
             let avgGrades = {};
             for (const subject of subjects) {
@@ -38,12 +40,12 @@ function SemesterGradeView({ exams, subjects, groups, onCancel }) {
                     if (member.type === "group") {
                         calculateForGroup(member);
                         if(isNaN(averagedGrades[member.id])) continue;
-                        sumProd += Number(grpAvgGrades[member.id]) * Number(member.weight);
+                        sumProd += mround(grpAvgGrades[member.id],0.5) * Number(member.weight);
                         sumWeight += Number(member.weight);
                         continue;
                     }
                     if(isNaN(averagedGrades[member.id])) continue;
-                    sumProd += Number(averagedGrades[member.id]) * Number(member.weight);
+                    sumProd += mround(averagedGrades[member.id],0.5) * Number(member.weight);
                     sumWeight += Number(member.weight);
                 }
                 console.log(group.name, sumProd, sumWeight);
