@@ -5,9 +5,17 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "chrome",
+            "request": "attach",
+            "name": "Attach to Chrome",
+            "port": 9222,
+            "urlFilter": "http://localhost:3000/*",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
             "type": "firefox",
             "request": "attach",
-            "name": "Attach"
+            "name": "Attach to Firefox"
         },
         {
             "type": "firefox",

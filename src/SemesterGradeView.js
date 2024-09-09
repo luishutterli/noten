@@ -50,7 +50,7 @@ function SemesterGradeView({ exams, subjects, groups, onCancel }) {
 				for (const member of members) {
 					if (member.type === "group") {
 						calculateForGroup(member);
-						if (Number.isNaN(averagedGrades[member.id])) continue;
+						if (Number.isNaN(grpAvgGrades[member.id])) continue;
 						sumProd +=
 							mround(grpAvgGrades[member.id], 0.5) * Number(member.weight);
 						sumWeight += Number(member.weight);
