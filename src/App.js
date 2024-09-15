@@ -32,7 +32,6 @@ function App() {
   const [groups, setGroups] = useState([]);
   const [exams, setExams] = useState([]);
 
-
   // Fetch functions
   const fetchCustomClaims = useCallback(async () => {
     if (!user) return;
@@ -40,46 +39,45 @@ function App() {
     const claims = await getUserClaims();
     console.log("Claims:", claims);
 
-    if(!claims.stripeRole) {
+    if (!claims.stripeRole) {
       navigate("/subscription");
       return;
     }
 
     setCustomClaims(claims);
     setLoadingClaims(false);
-  }, [user]);
-
-  const fechtSubjectsFromIds = async (ids, premade, uid) => {
-    const subjects = [];
-
-    const itterations = Math.ceil(ids.length / 10);
-
-    for (let i = 0; i < itterations; i++) {
-      const batchIds = ids.slice(i * 10, (i + 1) * 10);
-      let q;
-      if (premade) {
-        q = query(collection(firestore, "subjects"), where("premade", "==", premade), where(documentId(), "in", batchIds));
-      } else {
-        q = query(collection(firestore, "subjects"), where("premade", "==", premade), where(documentId(), "in", batchIds), where("uid", "==", uid));
-      }
-      const queryResults = await getDocs(q);
-      const batchSubjects = queryResults.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      subjects.push(...batchSubjects);
-    }
-    return subjects;
-  }
+  }, [user, navigate]);
 
   const resolveSubjects = useCallback(async (headGroup, collectedSubjects, collectedGroups, premade, uid) => {
+    const fechtSubjectsFromIds = async (ids, premade, uid) => {
+      const subjects = [];
+      const itterations = Math.ceil(ids.length / 10);
+
+      for (let i = 0; i < itterations; i++) {
+        const batchIds = ids.slice(i * 10, (i + 1) * 10);
+        let q;
+        if (premade) {
+          q = query(collection(firestore, "subjects"), where("premade", "==", premade), where(documentId(), "in", batchIds));
+        } else {
+          q = query(collection(firestore, "subjects"), where("premade", "==", premade), where(documentId(), "in", batchIds), where("uid", "==", uid));
+        }
+        const queryResults = await getDocs(q);
+        const batchSubjects = queryResults.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        subjects.push(...batchSubjects);
+      }
+      return subjects;
+    };
+
     const members = await fechtSubjectsFromIds(headGroup.members, premade, uid);
     for (const member of members) {
       if (member.type === "subject")
         collectedSubjects.push(member);
       else {
         collectedGroups.push(member);
-        resolveSubjects(member, collectedSubjects, collectedGroups, premade, uid);
+        await resolveSubjects(member, collectedSubjects, collectedGroups, premade, uid);
       }
     }
     return [collectedSubjects, collectedGroups];
@@ -94,7 +92,7 @@ function App() {
       const premade = !settings.halfterm.startsWith("um_");
       let q;
       if (premade) {
-        q = query(collection(firestore, "subjects"), where("premade", "==", premade), where("type", "==", "halfterm"),where("name", "==", settings.halfterm)); 
+        q = query(collection(firestore, "subjects"), where("premade", "==", premade), where("type", "==", "halfterm"), where("name", "==", settings.halfterm));
       } else {
         q = query(collection(firestore, "subjects"), where("premade", "==", premade), where("type", "==", "halfterm"), where("uid", "==", user.uid), where("name", "==", settings.halfterm));
       }
@@ -103,8 +101,6 @@ function App() {
         id: queryResults.docs[0].id,
         ...queryResults.docs[0].data()
       };
-
-
 
       let [subjects, groups] = await resolveSubjects(halfterm, [], [halfterm], premade, user.uid);
       if (!premade) {
@@ -130,8 +126,6 @@ function App() {
     }
   }, [user, resolveSubjects]);
 
-
-
   const fetchExams = useCallback(() => {
     if (!user) return;
     if (!customClaims) return;
@@ -151,11 +145,10 @@ function App() {
     }
   }, [user, customClaims]);
 
-
   // Fetch data
   useEffect(() => {
     fetchCustomClaims();
-  }, [user, fetchCustomClaims]);
+  }, [fetchCustomClaims]);
 
   // Settings
   const checkSettings = useCallback(async () => {
@@ -177,7 +170,7 @@ function App() {
 
   useEffect(() => {
     if (loadingClaims || !user) return;
-    if(subjects.length > 0) return;
+    if (subjects.length > 0) return;
     fetchSubjects();
     const unsubscribeExams = fetchExams();
 
@@ -194,7 +187,6 @@ function App() {
       if (unsubscribeExams) unsubscribeExams();
     };
   }, [user, loadingClaims, fetchSubjects, fetchExams]);
-
 
   // Handlers
   const handleNewExam = () => {
@@ -259,18 +251,18 @@ function App() {
     );
   }
 
-  if(showSemesterGradeView) {
+  if (showSemesterGradeView) {
     return (
       <div className="App">
-        <Header setLoadingSubscription={setLoadingSubscriptions}/>
-        <SemesterGradeView exams={exams} subjects={subjects} groups={groups} onCancel={() => setShowSemesterGradeView(false)}/>
+        <Header setLoadingSubscription={setLoadingSubscriptions} />
+        <SemesterGradeView exams={exams} subjects={subjects} groups={groups} onCancel={() => setShowSemesterGradeView(false)} />
       </div>
     );
   }
 
   return (
     <div className="App">
-      <Header setLoadingSubscription={setLoadingSubscriptions}/>
+      <Header setLoadingSubscription={setLoadingSubscriptions} />
       <div>
         {showExamCard && (
           <div className="backdrop">

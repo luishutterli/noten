@@ -42,10 +42,14 @@ function GradeListTable({ averagedGrades, subjects, showGrouped, groupings }) {
                     </thead>
                     <tbody>
                         {subjects.map((subject, index) => {
+                            if (subject.type !== "subject") return null;
                             const grade = averagedGrades[subject.id];
                             const displayedGrade = Number.isNaN(grade)
                                 ? "-"
                                 : mround(grade, 0.5);
+                            const subjectName = subject.teacher
+                                ? `${subject.name} (${subject.teacher})`
+                                : subject.name;
                             return (
                                 <tr
                                     key={subject.id}
@@ -55,9 +59,9 @@ function GradeListTable({ averagedGrades, subjects, showGrouped, groupings }) {
                                     }
                                     onMouseLeave={handleMouseLeave}>
                                     <td className="border p-2">
-                                        {subject.name}
+                                        {subjectName}
                                     </td>
-                                    <td className="border p-2">
+                                    <td className="border p-2 w-16">
                                         {displayedGrade}
                                     </td>
                                 </tr>
@@ -77,20 +81,26 @@ function GradeListTable({ averagedGrades, subjects, showGrouped, groupings }) {
                                         <th className="text-start border p-2">
                                             {grouping.name}
                                         </th>
-                                        <th className="text-start border p-2">
+                                        <th className="text-start border p-2 w-16">
                                             Note
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {grouping.members.map((member) => {
-                                        const subject = subjects.find(subject => subject.id === member);
-                                        const grade = averagedGrades[subject.id];
+                                        const subject = subjects.find(
+                                            (subject) => subject.id === member,
+                                        );
+                                        const grade =
+                                            averagedGrades[subject.id];
                                         const displayedGrade = Number.isNaN(
                                             grade,
                                         )
                                             ? "-"
                                             : mround(grade, 0.5);
+                                        const subjectName = subject.teacher
+                                            ? `${subject.name} (${subject.teacher})`
+                                            : subject.name;
                                         return (
                                             <tr
                                                 key={member}
@@ -100,7 +110,7 @@ function GradeListTable({ averagedGrades, subjects, showGrouped, groupings }) {
                                                 }
                                                 onMouseLeave={handleMouseLeave}>
                                                 <td className="border p-2">
-                                                    {subject.name}
+                                                    {subjectName}
                                                 </td>
                                                 <td className="border p-2">
                                                     {displayedGrade}
@@ -114,6 +124,47 @@ function GradeListTable({ averagedGrades, subjects, showGrouped, groupings }) {
                     })}
                 </>
             )}
+            <div className="mt-4 p-2 bg-gray-100 border rounded">
+                <h3 className="text-lg font-semibold">Durchschnitt</h3>
+                <p className="text-xl">
+                    {(() => {
+                        const halfterm = subjects.find(
+                            (s) => s.type === "halfterm",
+                        );
+                        const isIMS = halfterm.name.startsWith("2i");
+
+                        const grade = averagedGrades[halfterm.id];
+                        if (!halfterm || Number.isNaN(grade) || !grade) {
+                            return <>-</>;
+                        }
+
+                        if (isIMS) {
+                            const informatik = subjects.find(
+                                (s) =>
+                                    s.name === "Informatik" &&
+                                    s.type === "group",
+                            );
+                            const iGrade = averagedGrades[informatik.id];
+                            const renderedGrade = iGrade
+                                ? `${mround(iGrade, 0.5)} (${iGrade.toFixed(2)})`
+                                : "-";
+                            return (
+                                <>
+                                    Promotionsschnitt: {mround(grade, 0.5)} (
+                                    {grade.toFixed(2)})<br />
+                                    Informatik: {renderedGrade}
+                                </>
+                            );
+                        }
+
+                        return (
+                            <>
+                                ${mround(grade, 0.5)} (${grade.toFixed(2)})
+                            </>
+                        );
+                    })()}
+                </p>
+            </div>
             {tooltip.visible && (
                 <div
                     className="absolute bg-gray-700 text-white text-sm rounded px-2 py-1"
