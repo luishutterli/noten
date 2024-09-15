@@ -30,6 +30,9 @@ const ExamListTable = ({ onExamClick, exams, subjects }) => {
                         (subject) => subject.id === exam.subject,
                     );
                     const subjectName = subject ? subject.name : "";
+                    
+                    const gradeClass = exam.grade < 4 ? "text-red-500 bg-red-200" : "";
+
                     return (
                         <tr
                             key={exam.id}
@@ -38,11 +41,9 @@ const ExamListTable = ({ onExamClick, exams, subjects }) => {
                             onKeyUp={(e) => { if (e.key === 'Enter') onExamClick(exam); }}
                             tabIndex={0}>
                             <td className="border p-2">{subjectName}</td>
-                            <td className="border p-2">
-                                {formatDate(exam.date)}
-                            </td>
+                            <td className="border p-2">{formatDate(exam.date)}</td>
                             <td className="border p-2">{exam.name}</td>
-                            <td className="text-end border p-2">
+                            <td className={`text-end border p-2 ${gradeClass}`}>
                                 {round(exam.grade, 1)}
                             </td>
                             <td className="text-end border p-2">

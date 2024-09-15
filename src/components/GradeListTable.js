@@ -50,6 +50,9 @@ function GradeListTable({ averagedGrades, subjects, showGrouped, groupings }) {
                             const subjectName = subject.teacher
                                 ? `${subject.name} (${subject.teacher})`
                                 : subject.name;
+
+                            const gradeClass = grade < 4 && displayedGrade !== "-" ? "text-red-500 bg-red-200" : "";
+                            
                             return (
                                 <tr
                                     key={subject.id}
@@ -61,7 +64,7 @@ function GradeListTable({ averagedGrades, subjects, showGrouped, groupings }) {
                                     <td className="border p-2">
                                         {subjectName}
                                     </td>
-                                    <td className="border p-2 w-16">
+                                    <td className={`border p-2 w-16 ${gradeClass}`}>
                                         {displayedGrade}
                                     </td>
                                 </tr>
@@ -101,6 +104,9 @@ function GradeListTable({ averagedGrades, subjects, showGrouped, groupings }) {
                                         const subjectName = subject.teacher
                                             ? `${subject.name} (${subject.teacher})`
                                             : subject.name;
+
+                                        const gradeClass = grade < 4 && displayedGrade !== "-" ? "text-red-500 bg-red-200" : "";
+
                                         return (
                                             <tr
                                                 key={member}
@@ -112,7 +118,7 @@ function GradeListTable({ averagedGrades, subjects, showGrouped, groupings }) {
                                                 <td className="border p-2">
                                                     {subjectName}
                                                 </td>
-                                                <td className="border p-2">
+                                                <td className={`border p-2 ${gradeClass}`}>
                                                     {displayedGrade}
                                                 </td>
                                             </tr>

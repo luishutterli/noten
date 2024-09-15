@@ -8,7 +8,7 @@ import Header from "./components/Header";
 import ExamListTable from "./components/ExamListTable";
 import { Button, CircularProgress } from "@mui/material";
 import ExamCard from "./components/ExamCard";
-import { collection, query, addDoc, updateDoc, serverTimestamp, where, onSnapshot, doc, deleteDoc, getDoc, getDocs, documentId } from "firebase/firestore";
+import { collection, query, addDoc, updateDoc, serverTimestamp, where, onSnapshot, doc, deleteDoc, getDocs, documentId } from "firebase/firestore";
 import LandingPage from "./LandingPage";
 import CookieConsent from "./components/CookieConsent";
 import SemesterGradeView from "./SemesterGradeView";
@@ -137,6 +137,7 @@ function App() {
           id: doc.id,
           ...doc.data()
         }));
+        examsData.sort((a, b) => new Date(b.date) - new Date(a.date));
         setExams(examsData);
       });
       return unsubscribe;
@@ -168,6 +169,7 @@ function App() {
     checkSettings();
   }, [checkSettings]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Will cause re-render loop
   useEffect(() => {
     if (loadingClaims || !user) return;
     if (subjects.length > 0) return;
@@ -186,6 +188,7 @@ function App() {
     return () => {
       if (unsubscribeExams) unsubscribeExams();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, loadingClaims, fetchSubjects, fetchExams]);
 
   // Handlers

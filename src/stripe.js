@@ -17,11 +17,12 @@ const createCustomerPortalLink = async (origin) => {
     }
 };
 
-const createSubscriptionCheckout = async (uid, price, origin) => {
+const createSubscriptionCheckout = async (uid, price, origin, couponCode) => {
     try {
         const docRef = await addDoc(collection(firestore, "customers", uid, "checkout_sessions"), {
             price: price,
             trial_period_days: 5,
+            promotion_code: price === "price_1PtSM3P5WX35vts07fvFJukQ" ? couponCode : "",
             allow_promotion_codes: true,
             collect_shipping_address: false,
             success_url: origin,
