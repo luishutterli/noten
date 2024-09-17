@@ -5,11 +5,9 @@ import { getAuth, /*connectAuthEmulator*/ } from "firebase/auth";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 /* import { getAnalytics } from "firebase/analytics"; */
 
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCQ_il9Q3JfrFa2OY6HLkvcmwRz320HjFE", // TODO: Delete and Change key
+    apiKey: "AIzaSyDUndvqJ5Aqh70EkWXJ8KutmBz3MAu_gmc",
     authDomain: "noten-rechner.ch",
     projectId: "noten-29b59",
     storageBucket: "noten-29b59.appspot.com",

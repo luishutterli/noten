@@ -50,13 +50,13 @@ function LandingPage() {
           <strong>Hinweis:</strong> Diese Anwendung befindet sich derzeit in der Beta-Phase.
         </p>
         <section className="mt-12">
-          <Button
+          {/* <Button
             variant="contained"
             color="secondary"
             onClick={togglePrices}
           >
             Preise anzeigen
-          </Button>
+          </Button> */}
           {showPrices && (
             <div className="mt-4 flex flex-col items-center">
               <div className="bg-white text-black p-6 rounded-lg shadow-lg">
