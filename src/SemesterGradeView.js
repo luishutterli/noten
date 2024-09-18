@@ -7,7 +7,7 @@ import {
     FormControlLabel,
     Switch,
 } from "@mui/material";
-import ExamGradesChart from "./components/ExamGradechart";
+import ExamGradesChart from "./components/ExamGradeChart";
 
 function SemesterGradeView({ exams, subjects, groups, onCancel }) {
     const [loading, setLoading] = useState(true);

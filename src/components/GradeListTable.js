@@ -137,7 +137,7 @@ function GradeListTable({ averagedGrades, subjects, showGrouped, groupings }) {
                         const halfterm = subjects.find(
                             (s) => s.type === "halfterm",
                         );
-                        const isIMS = halfterm.name.startsWith("2i");
+                        const isIMS = halfterm.name.startsWith("2i") || halfterm.name.startsWith("3i");
 
                         const grade = averagedGrades[halfterm.id];
                         if (!halfterm || Number.isNaN(grade) || !grade) {
@@ -165,7 +165,7 @@ function GradeListTable({ averagedGrades, subjects, showGrouped, groupings }) {
 
                         return (
                             <>
-                                ${mround(grade, 0.5)} (${grade.toFixed(2)})
+                                {mround(grade, 0.5)} ({grade.toFixed(2)})
                             </>
                         );
                     })()}

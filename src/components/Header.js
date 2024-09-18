@@ -6,11 +6,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle, faCog, faSignOutAlt, faCreditCard } from "@fortawesome/free-solid-svg-icons";
 import { IconButton, Avatar } from "@mui/material";
 import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 
 const Header = ({ setLoadingSubscription }) => {
     const [user] = useAuthState(auth);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
+
+    const navigate = useNavigate();
 
     const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
@@ -51,7 +54,7 @@ const Header = ({ setLoadingSubscription }) => {
             document.removeEventListener("mousedown", handleClickOutside);
             document.removeEventListener("touchstart", handleClickOutside);
         };
-    }, [dropdownRef]);
+    }, []);
 
     return (
         <header className="flex justify-between items-center p-4 bg-gray-800 text-white">
@@ -69,7 +72,7 @@ const Header = ({ setLoadingSubscription }) => {
                 </IconButton>
                 {dropdownOpen && (
                     <div className="absolute right-0 mt-2 py-2 w-48 bg-white rounded-md shadow-xl z-20">
-                        <button type="button" className="w-full block px-4 py-2 text-sm text-start text-blue-500 hover:bg-gray-200">
+                        <button type="button" className="w-full block px-4 py-2 text-sm text-start text-blue-500 hover:bg-gray-200" onClick={() => navigate("/settings")}>
                             <FontAwesomeIcon icon={faCog} className="mr-2" /> Einstellungen
                         </button>
                         <button type="button" className="w-full block px-4 py-2 text-sm text-start text-blue-500 hover:bg-gray-200" onClick={handlePortalLink}>

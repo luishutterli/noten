@@ -10,6 +10,7 @@ import InitSubscription from "./InitSubscription";
 import Onboarding from "./Onboading";
 import PrivacyPolicy from "./PrivacyPolicy";
 import Impressum from "./Impressum";
+import SettingsPage from "./SettingsPage";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -20,6 +21,7 @@ root.render(
         <Route path="/auth" element={<AuthForms />} />
         <Route path="/subscription" element={<InitSubscription />} />
         <Route path="/onboarding" element={ <Onboarding />} />
+        <Route path="/settings" element={ <SettingsPage />} />
         <Route path="/privacy" element= { <PrivacyPolicy />} />
         <Route path="/impressum" element={ <Impressum />} />
         <Route path="/sAdmin" element={<SubjectAdminDashboard />} />
