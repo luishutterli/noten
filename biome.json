@@ -20,7 +20,8 @@
             "bracketSameLine": true,
             "bracketSpacing": true,
             "quoteStyle":"double",
-            "semicolons":"always"
+            "semicolons":"always",
+            "lineWidth": 135
         }
     }
 }

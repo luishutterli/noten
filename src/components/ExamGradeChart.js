@@ -8,6 +8,7 @@ import {
     Tooltip,
     ResponsiveContainer,
 } from "recharts";
+import PropTypes from "prop-types";
 
 const ExamGradesChart = ({ exams }) => {
     const gradeRanges = [
@@ -41,6 +42,10 @@ const ExamGradesChart = ({ exams }) => {
             </ResponsiveContainer>
         </div>
     );
+};
+
+ExamGradesChart.propTypes = {
+    exams: PropTypes.array.isRequired,
 };
 
 export default ExamGradesChart;

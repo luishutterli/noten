@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import GradeListTable from "./components/GradeListTable";
-import {
-    Button,
-    CircularProgress,
-    FormControlLabel,
-    Switch,
-} from "@mui/material";
+import { Button, Checkbox, CircularProgress, FormControlLabel } from "@mui/material";
 import ExamGradesChart from "./components/ExamGradeChart";
 
 function SemesterGradeView({ exams, subjects, groups, onCancel }) {
@@ -15,6 +10,7 @@ function SemesterGradeView({ exams, subjects, groups, onCancel }) {
     const [groupedAveragedGrades, setGroupedAveragedGrades] = useState(null);
 
     const [showGrouped, setShowGrouped] = useState(!!groups[0]?.groupings);
+    const [showRounded, setShowRounded] = useState(true);
 
     // Calculate the averaged grades for each subject
     useEffect(() => {
@@ -24,9 +20,7 @@ function SemesterGradeView({ exams, subjects, groups, onCancel }) {
         const calculateAveragedGrades = () => {
             const avgGrades = {};
             for (const subject of subjects) {
-                const subjectExams = exams.filter(
-                    (exam) => exam.subject === subject.id,
-                );
+                const subjectExams = exams.filter((exam) => exam.subject === subject.id);
                 let sumProd = 0;
                 let sumWeight = 0;
                 for (const exam of subjectExams) {
@@ -43,25 +37,19 @@ function SemesterGradeView({ exams, subjects, groups, onCancel }) {
             const subjectsAndGroups = subjects.concat(groups);
             const calculateForGroup = (group) => {
                 console.log("Calculating for group", group);
-                const members = subjectsAndGroups.filter((subject) =>
-                    group.members.includes(subject.id),
-                );
+                const members = subjectsAndGroups.filter((subject) => group.members.includes(subject.id));
                 let sumProd = 0;
                 let sumWeight = 0;
                 for (const member of members) {
                     if (member.type === "group") {
                         calculateForGroup(member);
                         if (Number.isNaN(grpAvgGrades[member.id])) continue;
-                        sumProd +=
-                            mround(grpAvgGrades[member.id], 0.5) *
-                            Number(member.weight);
+                        sumProd += mround(grpAvgGrades[member.id], 0.5) * Number(member.weight);
                         sumWeight += Number(member.weight);
                         continue;
                     }
                     if (Number.isNaN(averagedGrades[member.id])) continue;
-                    sumProd +=
-                        mround(averagedGrades[member.id], 0.5) *
-                        Number(member.weight);
+                    sumProd += mround(averagedGrades[member.id], 0.5) * Number(member.weight);
                     sumWeight += Number(member.weight);
                 }
                 console.log(group.name, sumProd, sumWeight);
@@ -76,8 +64,7 @@ function SemesterGradeView({ exams, subjects, groups, onCancel }) {
         };
 
         if (!averagedGrades) calculateAveragedGrades();
-        if (!groupedAveragedGrades && averagedGrades)
-            calculateGroupedAveragedGrades();
+        if (!groupedAveragedGrades && averagedGrades) calculateGroupedAveragedGrades();
     }, [exams, subjects, averagedGrades, groups, groupedAveragedGrades]);
 
     if (loading) {
@@ -95,26 +82,23 @@ function SemesterGradeView({ exams, subjects, groups, onCancel }) {
                 <div className="flex flex-col items-center m-2">
                     <div className="w-full max-w-[850px]">
                         <div className="w-full flex justify-between mb-4">
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={onCancel}>
+                            <Button variant="contained" color="primary" onClick={onCancel}>
                                 Zurück
                             </Button>
-                            {groups[0]?.groupings && (
+                            <div>
+                                {groups[0]?.groupings && (
+                                    <FormControlLabel
+                                        label="Gruppierte Noten"
+                                        labelPlacement="start"
+                                        control={<Checkbox checked={showGrouped} onChange={(e) => setShowGrouped(e.target.checked)} />}
+                                    />
+                                )}
                                 <FormControlLabel
-                                    label="Gruppierte Noten"
+                                    label="Runden"
                                     labelPlacement="start"
-                                    control={
-                                        <Switch
-                                            checked={showGrouped}
-                                            onChange={(e) =>
-                                                setShowGrouped(e.target.checked)
-                                            }
-                                        />
-                                    }
+                                    control={<Checkbox checked={showRounded} onChange={(e) => setShowRounded(e.target.checked)} />}
                                 />
-                            )}
+                            </div>
                         </div>
                         <div className="overflow-x-auto">
                             <div className="w-[850px] max-w-full">
@@ -126,12 +110,13 @@ function SemesterGradeView({ exams, subjects, groups, onCancel }) {
                                     subjects={subjects.concat(groups)}
                                     showGrouped={showGrouped}
                                     groupings={groups[0]?.groupings}
+                                    showRounded={showRounded}
                                 />
                             </div>
                         </div>
                         {exams.length > 0 && (
                             <div className="mt-4 p-2 bg-gray-100 border rounded">
-								<h3 className="text-lg font-semibold">Prüfungsnoten Verteilung</h3>
+                                <h3 className="text-lg font-semibold">Prüfungsnoten Verteilung</h3>
                                 <ExamGradesChart exams={exams} />
                             </div>
                         )}
