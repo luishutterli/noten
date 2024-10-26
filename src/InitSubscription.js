@@ -48,7 +48,7 @@ function InitSubscription() {
                 user.uid,
                 priceId,
                 origin,
-                "promo_1PzM6IP5WX35vts0ivZ0ddHN"
+                "promo_1QCErxP5WX35vts0qgNwdC7R"
             );
             console.log("Redirecting to: ", url);
             window.location.href = url;
@@ -182,7 +182,7 @@ function InitSubscription() {
                                         variant="body2"
                                         color="text.secondary"
                                         className="text-red-500">
-                                        20% Rabatt bis zum 1. Oktober! 🎉 <br />
+                                        20% Rabatt bis zum 1. November! 🎉 <br />
                                         Geltend für die ersten 4 Monate.
                                     </Typography>
                                 </div>
