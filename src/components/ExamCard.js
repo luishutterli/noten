@@ -7,11 +7,11 @@ const ExamCard = ({ exam, onSave, onCancel, onDelete, subjects }) => {
     const today = new Date().toISOString().split("T")[0];
 
     const findSubjectIdByDName = (name) => {
-        let subj = subjects.find(subj => subj.name === name);
+        const subj = subjects.find(subj => subj.name === name);
         return subj?.id || "";
     };
     const findSubjectDNameById = (id) => {
-        let subj = subjects.find(subj => subj.id === id);
+        const subj = subjects.find(subj => subj.id === id);
         return (subj.name + (subj.teacher && ` (${subj.teacher})`)) || ""
     };
 
@@ -25,8 +25,8 @@ const ExamCard = ({ exam, onSave, onCancel, onDelete, subjects }) => {
     const [dateError, setDateError] = useState("");
 
     const validateGrade = (value) => {
-        const gradeValue = parseFloat(value);
-        if (isNaN(gradeValue) || gradeValue < 1 || gradeValue > 6) {
+        const gradeValue = Number.parseFloat(value);
+        if (Number.isNaN(gradeValue) || gradeValue < 1 || gradeValue > 6) {
             setGradeError("Note muss eine Zahl zwischen 1 und 6 sein");
         } else {
             setGradeError("");
@@ -34,8 +34,8 @@ const ExamCard = ({ exam, onSave, onCancel, onDelete, subjects }) => {
     };
 
     const validateWeight = (value) => {
-        const weightValue = parseFloat(value);
-        if (isNaN(weightValue)) {
+        const weightValue = Number.parseFloat(value);
+        if (Number.isNaN(weightValue)) {
             setWeightError("Gewicht muss eine Zahl sein");
         } else {
             setWeightError("");
