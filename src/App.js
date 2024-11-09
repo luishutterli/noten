@@ -327,13 +327,13 @@ function App() {
                             <Button variant="contained" color="primary" onClick={() => setShowSemesterGradeView(true)}>
                                 Zeugnis
                             </Button>
-                            <div className="flex flex-row">
+                            <div className="flex flex-row pl-2">
                                 <Button variant="contained" color="primary" onClick={handleNewExam}>
                                     Neue Prüfung
                                 </Button>
                                 <div className="p-2" />
                                 <Button variant="contained" color="primary" onClick={() => setShowTargetGradeCalculator(true)}>
-                                    Wunsch Note 
+                                    Wunsch Durchschnitt 
                                     <FontAwesomeIcon icon={faCalculator} className="ml-1" />
                                 </Button>
                                 

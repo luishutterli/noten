@@ -64,7 +64,7 @@ function TargetGradeCalculatorCard({ onCancel, subjects, exams }) {
     return (
         <Card>
             <CardContent>
-                <Typography>Wunsch Note berrechnen</Typography>
+                <Typography>Wunsch Durchschnitt berrechnen</Typography>
                 <TextField
                     select
                     label="Fach"
@@ -82,7 +82,7 @@ function TargetGradeCalculatorCard({ onCancel, subjects, exams }) {
                     ))}
                 </TextField>
                 <TextField
-                    label="Gewünschte Note"
+                    label="Gewünschter Durchschnitt"
                     value={desiredGrade}
                     onChange={(e) => {
                         setDesiredGrade(e.target.value);
