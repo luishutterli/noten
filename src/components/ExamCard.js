@@ -6,16 +6,8 @@ import dayjs from "dayjs";
 const ExamCard = ({ exam, onSave, onCancel, onDelete, subjects }) => {
     const today = new Date().toISOString().split("T")[0];
 
-    const findSubjectIdByDName = (name) => {
-        const subj = subjects.find(subj => subj.name === name);
-        return subj?.id || "";
-    };
-    const findSubjectDNameById = (id) => {
-        const subj = subjects.find(subj => subj.id === id);
-        return (subj.name + (subj.teacher && ` (${subj.teacher})`)) || ""
-    };
-
-    const [subject, setSubject] = useState(exam ? findSubjectDNameById(exam.subject) : "");
+    // const [subject, setSubject] = useState(exam ? findSubjectDNameById(exam.subject) : "");
+    const [subject, setSubject] = useState(exam ? exam.subject : "");
     const [date, setDate] = useState(exam ? exam.date : today);
     const [name, setName] = useState(exam ? exam.name : "");
     const [grade, setGrade] = useState(exam ? exam.grade : "");
@@ -54,9 +46,9 @@ const ExamCard = ({ exam, onSave, onCancel, onDelete, subjects }) => {
     const handleSave = () => {
         let newExam = {};
         if(exam)
-            newExam = { id: exam.id, subject: findSubjectIdByDName(subject), date: date, name: name, grade: grade, weight: weight };
+            newExam = { id: exam.id, subject: subject, date: date, name: name, grade: grade, weight: weight };
         else
-            newExam = { subject: findSubjectIdByDName(subject), date: date, name: name, grade: grade, weight: weight };
+            newExam = { subject: subject, date: date, name: name, grade: grade, weight: weight };
         onSave(newExam);
     };
 
@@ -77,8 +69,8 @@ const ExamCard = ({ exam, onSave, onCancel, onDelete, subjects }) => {
                     margin="normal"
                 >
                     {subjects.map((subj) => (
-                        <MenuItem key={subj.id} value={subj.name}>
-                            {subj.name} {subj.teacher && `(${subj.teacher})`}
+                        <MenuItem key={subj.id} value={subj.id}>
+                            {(subj.name + (subj.teacher && ` (${subj.teacher})`))}
                         </MenuItem>
                     ))}
                 </TextField>

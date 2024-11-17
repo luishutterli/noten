@@ -237,8 +237,8 @@ function App() {
                 subject: exam.subject,
                 date: exam.date,
                 name: exam.name,
-                grade: exam.grade,
-                weight: exam.weight,
+                grade: Number.parseFloat(exam.grade),
+                weight: Number.parseFloat(exam.weight),
                 updatedAt: serverTimestamp(),
             });
         } else {
@@ -248,8 +248,8 @@ function App() {
                 subject: exam.subject,
                 date: exam.date,
                 name: exam.name,
-                grade: exam.grade,
-                weight: exam.weight,
+                grade: Number.parseFloat(exam.grade),
+                weight: Number.parseFloat(exam.weight),
                 updatedAt: serverTimestamp(),
             });
         }
