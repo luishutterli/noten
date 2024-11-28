@@ -38,18 +38,26 @@ function SemesterGradeView({ exams, subjects, groups, onCancel }) {
             const calculateForGroup = (group) => {
                 console.log("Calculating for group", group);
                 const members = subjectsAndGroups.filter((subject) => group.members.includes(subject.id));
+                const collectAs = group.collectAs || "halfRounded";
+                if (collectAs !== "halfRounded") console.log("CollectAs", group)
                 let sumProd = 0;
                 let sumWeight = 0;
                 for (const member of members) {
                     if (member.type === "group") {
                         calculateForGroup(member);
                         if (Number.isNaN(grpAvgGrades[member.id])) continue;
-                        sumProd += mround(grpAvgGrades[member.id], 0.5) * Number(member.weight);
+
+                        if (collectAs === "notRounded") sumProd += grpAvgGrades[member.id] * Number(member.weight);
+                        else if (collectAs === "halfRounded") sumProd += mround(grpAvgGrades[member.id], 0.5) * Number(member.weight);
+
                         sumWeight += Number(member.weight);
                         continue;
                     }
                     if (Number.isNaN(averagedGrades[member.id])) continue;
-                    sumProd += mround(averagedGrades[member.id], 0.5) * Number(member.weight);
+
+                    if (collectAs === "notRounded") sumProd += averagedGrades[member.id] * Number(member.weight);
+                    else if (collectAs === "halfRounded") sumProd += mround(averagedGrades[member.id], 0.5) * Number(member.weight);
+
                     sumWeight += Number(member.weight);
                 }
                 console.log(group.name, sumProd, sumWeight);

@@ -23,7 +23,7 @@ const ExamGradesChart = ({ exams }) => {
     const chartData = gradeRanges.map((range) => ({
         range: range.label,
         count: exams.filter(
-            (exam) => exam.grade >= range.min && exam.grade < range.max,
+            (exam) => exam.grade > range.min && exam.grade <= range.max,
         ).length,
     }));
 

@@ -36,10 +36,7 @@ function TargetGradeCalculatorCard({ onCancel, subjects, exams }) {
             setResultText("");
             return;
         }
-        const fSubject = subjects.find((subj) => {
-            const dName = subj.name + (subj.teacher && ` (${subj.teacher})`);
-            return dName === subject;
-        });
+        const fSubject = subjects.find((subj) => subj.id === subject);
         console.log(`dName: ${subject} found: ${fSubject.name}`);
         console.log(`desiredGrade: ${desiredGrade} weight: ${weight}`);
 
@@ -76,7 +73,7 @@ function TargetGradeCalculatorCard({ onCancel, subjects, exams }) {
                     fullWidth
                     margin="dense">
                     {subjects.map((subj) => (
-                        <MenuItem key={subj.id} value={subj.name}>
+                        <MenuItem key={subj.id} value={subj.id}>
                             {subj.name} {subj.teacher && `(${subj.teacher})`}
                         </MenuItem>
                     ))}

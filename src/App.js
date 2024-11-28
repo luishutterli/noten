@@ -201,27 +201,24 @@ function App() {
         checkSettings();
     }, [checkSettings]);
 
-    // biome-ignore lint/correctness/useExhaustiveDependencies: Will cause re-render loop
     useEffect(() => {
-        if (loadingClaims || !user) return;
-        if (subjects.length > 0) return;
-        fetchSubjects();
-        const unsubscribeExams = fetchExams();
+        const fetchData = async () => {
+            if (loadingClaims || !user) return;
+            if (subjects.length > 0) return;
+            await fetchSubjects();
+            const unsubscribeExams = fetchExams();
 
-        // TODO: Replace this with smart fetching, not client side filtering
-        const updateExams = async () => {
-            while (!subjects) {}
+            // Filter exams based on loaded subjects
             const subjectIds = subjects.map((subject) => subject.id);
-            setExams(exams.filter((exam) => subjectIds.includes(exam.subject)));
+            setExams((prevExams) => prevExams.filter((exam) => subjectIds.includes(exam.subject)));
+
+            return () => {
+                if (unsubscribeExams) unsubscribeExams();
+            };
         };
 
-        updateExams();
-
-        return () => {
-            if (unsubscribeExams) unsubscribeExams();
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user, loadingClaims, fetchSubjects, fetchExams]);
+        fetchData();
+    }, [user, loadingClaims, fetchSubjects, fetchExams, subjects]);
 
     // Handlers
     const handleNewExam = () => {

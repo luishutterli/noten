@@ -14,4 +14,5 @@ Firebase Collection `subjects`
 - `teacher`: Teacher Name, `(string)` -> Used in type subject
 - `members`: Array of id's to sub-subjects(or groups), `(array of strings)` -> Used in type halfterm and group
 - `groupings`: Grouping for advanced report card view, `(map (group:array), array of strings (ids to subjects))`
+- `collectAs`: How a group should take its sub subjects grade into its average (`"halfRounded" or "notRounded"`), `(string)`
 
