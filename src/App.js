@@ -153,30 +153,42 @@ function App() {
             console.log("Groupsss:", groups);
             setSubjects(subjects);
             setGroups(groups);
+            return subjects;
         } catch (error) {
             console.error("Error fetching subjects: ", error);
         }
     }, [user, resolveSubjects]);
 
-    const fetchExams = useCallback(() => {
-        if (!user) return;
-        if (!customClaims) return;
-        try {
-            const q = query(collection(firestore, "grades"), where("uid", "==", user.uid));
-            const unsubscribe = onSnapshot(q, (querySnapshot) => {
-                console.log("fetching exams source:", querySnapshot.metadata.fromCache ? "cache" : "server");
-                const examsData = querySnapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data(),
-                }));
-                examsData.sort((a, b) => new Date(b.date) - new Date(a.date));
-                setExams(examsData);
-            });
-            return unsubscribe;
-        } catch (error) {
-            console.error("Error fetching exams: ", error);
-        }
-    }, [user, customClaims]);
+    const fetchExams = useCallback(
+        (subj) => {
+            if (!user) return;
+            if (!customClaims) return;
+            console.log("Subjects from state: ", subjects.length === 0);
+            console.log("Subjects from vars: ", (!subj || subj.length === 0));
+            if (subjects.length === 0 && (!subj || subj.length === 0)) return;
+            try {
+                const q = query(collection(firestore, "grades"), where("uid", "==", user.uid));
+                const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                    console.log("fetching exams source:", querySnapshot.metadata.fromCache ? "cache" : "server");
+                    let examsData = querySnapshot.docs.map((doc) => ({
+                        id: doc.id,
+                        ...doc.data(),
+                    }));
+                    examsData.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    const subjectIds = (subjects.length !== 0) ? subjects.map((subject) => subject.id) : subj.map((subject) => subject.id);
+                    console.log("SubjectIds:", subjectIds);
+                    console.log("Exams subject ids:", examsData.map((exam) => exam.subject));
+                    examsData = examsData.filter((exam) => subjectIds.includes(exam.subject));
+                    console.log("Exams length:", examsData.length);
+                    setExams(examsData);
+                });
+                return unsubscribe;
+            } catch (error) {
+                console.error("Error fetching exams: ", error);
+            }
+        },
+        [user, subjects, customClaims],
+    );
 
     // Fetch data
     useEffect(() => {
@@ -202,19 +214,26 @@ function App() {
     }, [checkSettings]);
 
     useEffect(() => {
+        // const fetchData = async () => {
+        //     if (loadingClaims || !user) return;
+        //     if (subjects.length > 0) return;
+        //     await fetchSubjects();
+        //     const unsubscribeExams = fetchExams();
+
+        //     // Filter exams based on loaded subjects
+        //     const subjectIds = subjects.map((subject) => subject.id);
+        //     setExams((prevExams) => prevExams.filter((exam) => subjectIds.includes(exam.subject)));
+
+        //     return () => {
+        //         if (unsubscribeExams) unsubscribeExams();
+        //     };
+        // };
+
         const fetchData = async () => {
             if (loadingClaims || !user) return;
             if (subjects.length > 0) return;
-            await fetchSubjects();
-            const unsubscribeExams = fetchExams();
-
-            // Filter exams based on loaded subjects
-            const subjectIds = subjects.map((subject) => subject.id);
-            setExams((prevExams) => prevExams.filter((exam) => subjectIds.includes(exam.subject)));
-
-            return () => {
-                if (unsubscribeExams) unsubscribeExams();
-            };
+            const subj = await fetchSubjects();
+            fetchExams(subj);
         };
 
         fetchData();
@@ -330,10 +349,9 @@ function App() {
                                 </Button>
                                 <div className="p-2" />
                                 <Button variant="contained" color="primary" onClick={() => setShowTargetGradeCalculator(true)}>
-                                    Wunsch Durchschnitt 
+                                    Wunsch Durchschnitt
                                     <FontAwesomeIcon icon={faCalculator} className="ml-1" />
                                 </Button>
-                                
                             </div>
                         </div>
                         <div className="overflow-x-auto">

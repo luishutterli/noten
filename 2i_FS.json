@@ -1,0 +1,142 @@
+[
+  {
+    "name": "Deutsch",
+    "premade": true,
+    "type": "subject",
+    "weight": 1,
+    "teacher": "",
+    "_tempId": "temp-1739712666852-n37fw0ep9"
+  },
+  {
+    "name": "Französisch",
+    "premade": true,
+    "type": "subject",
+    "weight": 1,
+    "teacher": "",
+    "_tempId": "temp-1739712859863-h4umz5d0i"
+  },
+  {
+    "name": "Englisch",
+    "premade": true,
+    "type": "subject",
+    "weight": 1,
+    "teacher": "",
+    "_tempId": "temp-1739712870093-g3pamij67"
+  },
+  {
+    "name": "Mathematik",
+    "premade": true,
+    "type": "subject",
+    "weight": 1,
+    "teacher": "",
+    "_tempId": "temp-1739712882704-zkwvrytns"
+  },
+  {
+    "name": "Finanz- und Rechnungswesen",
+    "premade": true,
+    "type": "subject",
+    "weight": 1,
+    "teacher": "",
+    "_tempId": "temp-1739712912293-44onn7dtm"
+  },
+  {
+    "name": "Wirtschaft und Recht",
+    "premade": true,
+    "type": "subject",
+    "weight": 1,
+    "teacher": "",
+    "_tempId": "temp-1739712928192-yemafay8e"
+  },
+  {
+    "name": "Geschichte und Politik",
+    "premade": true,
+    "type": "subject",
+    "weight": 1,
+    "teacher": "",
+    "_tempId": "temp-1739712952459-ctomfqntu"
+  },
+  {
+    "name": "Informatik: Application Engineering",
+    "premade": true,
+    "type": "subject",
+    "weight": 1,
+    "teacher": "KEL",
+    "_tempId": "temp-1739713054332-sdsgrv4rn"
+  },
+  {
+    "name": "Informatik: Application Engineering",
+    "premade": true,
+    "type": "subject",
+    "weight": 1,
+    "teacher": "NÜE",
+    "_tempId": "temp-1739713063923-r35eb8bl0"
+  },
+  {
+    "name": "Informatik: Web Engineering",
+    "premade": true,
+    "type": "subject",
+    "weight": 1,
+    "teacher": "",
+    "_tempId": "temp-1739713098877-4jkb97to4"
+  },
+  {
+    "name": "Informatik: Data Management",
+    "premade": true,
+    "type": "subject",
+    "weight": 1,
+    "teacher": "",
+    "_tempId": "temp-1739713118176-qnkugq1j5"
+  },
+  {
+    "name": "Informatik: Business Engineering",
+    "premade": true,
+    "type": "subject",
+    "weight": 1,
+    "teacher": "",
+    "_tempId": "temp-1739713149713-v0ngrze2u"
+  },
+  {
+    "name": "2i FS",
+    "premade": true,
+    "type": "halfterm",
+    "weight": 1,
+    "collectAs": "notRounded",
+    "members": [
+      "temp-1739712666852-n37fw0ep9",
+      "temp-1739712859863-h4umz5d0i",
+      "temp-1739712870093-g3pamij67",
+      "temp-1739712882704-zkwvrytns",
+      "temp-1739712912293-44onn7dtm",
+      "temp-1739712928192-yemafay8e",
+      "temp-1739712952459-ctomfqntu",
+      "temp-1739712977769-e5ey4ajbr"
+    ],
+    "_tempId": "temp-1739712654207-sif6673f0"
+  },
+  {
+    "name": "Informatik",
+    "premade": true,
+    "type": "group",
+    "weight": 2,
+    "collectAs": "halfRounded",
+    "members": [
+      "temp-1739713041736-whu2mvf8j",
+      "temp-1739713098877-4jkb97to4",
+      "temp-1739713118176-qnkugq1j5",
+      "temp-1739713149713-v0ngrze2u"
+    ],
+    "_tempId": "temp-1739712977769-e5ey4ajbr"
+  },
+  {
+    "name": "Informatik: Application Engineering",
+    "premade": true,
+    "type": "group",
+    "weight": 1,
+    "collectAs": "notRounded",
+    "members": [
+      "temp-1739713054332-sdsgrv4rn",
+      "temp-1739713063923-r35eb8bl0"
+    ],
+    "_tempId": "temp-1739713041736-whu2mvf8j"
+  }
+]
